@@ -1,6 +1,6 @@
 {
   "name": "react-native-keyboard-insets",
-  "description": "TODO",
+  "description": "A powerful Keyboard Aware View for React Native",
   "version": "1.0.0",
   "main": "./lib/index.js",
   "typings": "./lib/index.d.ts",
@@ -19,9 +19,9 @@
     "!ios/build",
     "!**/__tests__"
   ],
-  "repository": "https://github.com/github-account/react-native-keyboard-insets",
-  "homepage": "https://github.com/github-account/react-native-keyboard-insets#readme",
-  "author": "author-name <author-email@gmail.com> (https://github.com/github-account)",
+  "repository": "https://github.com/listenzz/react-native-keyboard-insets",
+  "homepage": "https://github.com/listenzz/react-native-keyboard-insets#readme",
+  "author": "listenzz <listenzz@163.com> (https://github.com/listenzz)",
   "license": "MIT",
   "keywords": [
     "react-native"
