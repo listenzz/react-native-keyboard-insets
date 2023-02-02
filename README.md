@@ -10,6 +10,24 @@ A powerful Keyboard Aware View for React Native.
 yarn add react-native-keyboard-insets
 ```
 
+### Android
+
+You must enable [Edge-to-Edge](https://developer.android.com/develop/ui/views/layout/edge-to-edge) on Android.
+
+```java
+// MainActivity.java
+public class MainActivity extends ReactActivity {
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(null);
+        // enable Edge-to-Edge
+        WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
+    }
+}
+```
+
+> 如果你使用了 [hybrid-navigation](https://github.com/listenzz/hybrid-navigation)，则不需要做任何事情，因为 hybrid-navigation 已经帮你做了。
+
 ## Usage
 
 Just Wrap Your View or ScrollView with KeyboardInsetsView. It will automatically adjust the height of the view when the keyboard is shown or hidden.
