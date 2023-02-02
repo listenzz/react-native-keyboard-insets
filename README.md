@@ -2,11 +2,11 @@
 
 A powerful Keyboard Aware View for React Native.
 
-支持和 `ScrollView` 一起使用，支持嵌套，继承于 `View`，可以像 `View` 一样使用。
-
 使用简单，自动模式下不需要额外代码来处理键盘。
 
 ![README-2023-02-02-15-56-36](https://todoit.oss-cn-shanghai.aliyuncs.com/assets/README-2023-02-02-15-56-36.gif)
+
+本库主要依据 Google 官方指南 [Synchronize animation with the software keyboard](https://developer.android.com/develop/ui/views/layout/sw-keyboard#synchronize-animation) 来实现，同时参考了 [react-native-keyboard-controller](https://github.com/kirillzyusko/react-native-keyboard-controller)。因为该库不是很符合我的需求，所以我自己写了一个。
 
 ## Installation
 
@@ -20,7 +20,7 @@ yarn add react-native-keyboard-insets
 
 ### Android
 
-You must enable [Edge-to-Edge](https://developer.android.com/develop/ui/views/layout/edge-to-edge) on Android.
+Before setting up control and animation for the software keyboard, configure your app to [display edge-to-edge](https://developer.android.com/develop/ui/views/layout/edge-to-edge). This allows it to handle system window insets such as the system bars and the on-screen keyboard.
 
 ```java
 // MainActivity.java
@@ -36,7 +36,7 @@ public class MainActivity extends ReactActivity {
 }
 ```
 
-并且在 AndroidManifest.xml 中设置 `android:windowSoftInputMode="adjustResize"`，这样 WindowInsets API 才会检测到键盘的显示和隐藏。
+To achieve the best backward compatibility with this AndroidX implementation, set android:windowSoftInputMode="adjustResize" to the activity in AndroidManifest.xml.
 
 ```xml
 <!-- AndroidManifest.xml -->
@@ -95,6 +95,8 @@ Support Nested.
   ...
 </KeyboardInsetsView>
 ```
+
+**KeyboardInsetsView** 本质上是个 `View`，所以你可以使用 `View` 的所有属性，也可以和 `View` 互相替换。
 
 ## 运行 example 项目
 
