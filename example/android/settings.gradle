@@ -1,0 +1,8 @@
+rootProject.name = 'KeyboardInsetsExample'
+apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle")
+applyNativeModulesSettingsGradle(settings, "../..")
+
+include ':app'
+
+include ':react-native-keyboard-insets'
+project(':react-native-keyboard-insets').projectDir = new File(rootProject.projectDir, '../../android')
