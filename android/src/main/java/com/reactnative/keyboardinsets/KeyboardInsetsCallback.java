@@ -33,11 +33,11 @@ public class KeyboardInsetsCallback extends WindowInsetsAnimationCompat.Callback
     }
 
     private View focusView;
-    private boolean animating;
+    private boolean transitioning;
 
     @Override
     public void onPrepare(@NonNull WindowInsetsAnimationCompat animation) {
-        animating = true;
+        transitioning = true;
     }
 
     @NonNull
@@ -69,7 +69,7 @@ public class KeyboardInsetsCallback extends WindowInsetsAnimationCompat.Callback
     @Override
     public void onEnd(@NonNull WindowInsetsAnimationCompat animation) {
         super.onEnd(animation);
-        animating = false;
+        transitioning = false;
         
         if (!shouldHandleKeyboardTransition(focusView)) {
             return;
@@ -95,7 +95,7 @@ public class KeyboardInsetsCallback extends WindowInsetsAnimationCompat.Callback
 
     @Override
     public WindowInsetsCompat onApplyWindowInsets(View v, WindowInsetsCompat insets) {
-        if (shouldHandleKeyboardTransition(focusView) && !animating) {
+        if (shouldHandleKeyboardTransition(focusView) && !transitioning) {
             FLog.w("KeyboardInsets", "onApplyWindowInsets " + insets);
             handleKeyboardTransition(insets);
         }
