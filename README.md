@@ -14,12 +14,18 @@ A powerful Keyboard Aware View for React Native.
 yarn add react-native-keyboard-insets
 ```
 
+### iOS
+
+不需要额外配置
+
 ### Android
 
 You must enable [Edge-to-Edge](https://developer.android.com/develop/ui/views/layout/edge-to-edge) on Android.
 
 ```java
 // MainActivity.java
+import androidx.core.view.WindowCompat;
+
 public class MainActivity extends ReactActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,7 +36,39 @@ public class MainActivity extends ReactActivity {
 }
 ```
 
-> 如果你使用了 [hybrid-navigation](https://github.com/listenzz/hybrid-navigation)，则不需要做任何事情，因为 hybrid-navigation 已经帮你做了。
+并且在 AndroidManifest.xml 中设置 `android:windowSoftInputMode="adjustResize"`，这样 WindowInsets API 才会检测到键盘的显示和隐藏。
+
+```xml
+<!-- AndroidManifest.xml -->
+<activity
+  android:name=".MainActivity"
+    ...
+  android:windowSoftInputMode="adjustResize">
+  <intent-filter>
+    ...
+  </intent-filter>
+</activity>
+```
+
+开启 Edge-to-Edge 后，你的 UI 会撑满整个屏幕，你需要使用 [react-native-safe-area-context](https://github.com/th3rdwave/react-native-safe-area-context) 来处理和系统 UI (譬如虚拟导航键) 重叠的部分。
+
+可参考以下代码进行全局处理，也可以每个页面单独处理，以实现更美观的 UI 效果。
+
+```tsx
+import { Platform } from 'react-native'
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context'
+
+function App() {
+  return (
+    <SafeAreaProvider>
+      <NavigationContainer>...</NavigationContainer>
+      {Platform.OS === 'android' && <SafeAreaView mode="margin" edges={['bottom']} />}
+    </SafeAreaProvider>
+  )
+}
+```
+
+> 如果使用 [hybrid-navigation](https://github.com/listenzz/hybrid-navigation) 作为导航组件，则不需要做任何事情，因为它已经帮你处理好了。
 
 ## Usage
 
