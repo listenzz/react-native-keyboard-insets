@@ -3,15 +3,16 @@
 #import <React/RCTBridgeModule.h>
 #import <HybridNavigation/HybridNavigation.h>
 
-@interface AppDelegate ()
+@interface AppDelegate () <RCTBridgeDelegate>
 
 @end
 
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    NSURL *jsCodeLocation = [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"example/index" fallbackResource:nil];
-    [[HBDReactBridgeManager get] installWithBundleURL:jsCodeLocation launchOptions:launchOptions];
+    
+    RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:self launchOptions:launchOptions];
+    [[HBDReactBridgeManager get] installWithBridge:bridge];
         
     UIStoryboard *storyboard =  [UIStoryboard storyboardWithName:@"LaunchScreen" bundle:nil];
     UIViewController *rootViewController = [storyboard instantiateInitialViewController];
@@ -20,6 +21,14 @@
     self.window.rootViewController = rootViewController;
     [self.window makeKeyAndVisible];
     return YES;
+}
+
+- (NSURL *)sourceURLForBridge:(RCTBridge *)bridge {
+#if DEBUG
+    return [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"example/index" fallbackResource:nil];
+#else
+    return [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
+#endif
 }
 
 @end

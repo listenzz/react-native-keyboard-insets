@@ -1,18 +1,18 @@
 import { Platform } from 'react-native'
-import { ReactRegistry, Navigator, Garden, BarStyleDarkContent } from 'hybrid-navigation'
+import Navigation, { BarStyleDarkContent } from 'hybrid-navigation'
 import App from './App'
 
-Garden.setStyle({
+Navigation.setDefaultOptions({
   screenBackgroundColor: '#F8F8F8',
   topBarStyle: BarStyleDarkContent,
   statusBarColorAndroid: Platform.Version > 21 ? undefined : '#4A4A4A',
 })
 
-ReactRegistry.startRegisterComponent()
-ReactRegistry.registerComponent('KeyboardInsets', () => App)
-ReactRegistry.endRegisterComponent()
+Navigation.startRegisterComponent()
+Navigation.registerComponent('KeyboardInsets', () => App)
+Navigation.endRegisterComponent()
 
-Navigator.setRoot({
+Navigation.setRoot({
   stack: {
     children: [
       {

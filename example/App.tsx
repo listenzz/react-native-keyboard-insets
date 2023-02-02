@@ -1,21 +1,40 @@
 import React from 'react'
 import { withNavigationItem } from 'hybrid-navigation'
-import { StyleSheet, TouchableOpacity, Text, View } from 'react-native'
-import { lib } from 'react-native-keyboard-insets'
+import { StyleSheet, TextInput, ScrollView } from 'react-native'
+import { KeyboardInsetsView } from 'react-native-keyboard-insets'
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context'
 
 function App() {
-  function handlePress() {
-    console.log('You have pressed me.')
-    console.log(lib(8, 9))
-  }
-
   return (
-    <View style={styles.container}>
-      <Text style={styles.welcome}>Hello World!</Text>
-      <TouchableOpacity onPress={handlePress} activeOpacity={0.2} style={styles.button}>
-        <Text style={styles.buttonText}>press me</Text>
-      </TouchableOpacity>
-    </View>
+    <SafeAreaProvider>
+      <KeyboardInsetsView extraHeight={16} style={{ flex: 1 }}>
+        <ScrollView contentContainerStyle={styles.container}>
+          {Array.from({ length: 9 }).map((item, index) => (
+            <TextInput
+              key={index}
+              style={styles.input}
+              placeholder={`test keyboard instes ${index}`}
+              textAlignVertical="center"
+            />
+          ))}
+          <KeyboardInsetsView extraHeight={16} style={styles.keyboard}>
+            <TextInput style={styles.input} placeholder={'test keyboard instes'} textAlignVertical="center" />
+          </KeyboardInsetsView>
+          {Array.from({ length: 10 }).map((item, index) => (
+            <TextInput
+              key={index + 10}
+              style={styles.input}
+              placeholder={`test keyboard instes ${index + 10}`}
+              textAlignVertical="center"
+            />
+          ))}
+        </ScrollView>
+        <KeyboardInsetsView extraHeight={16} style={[styles.keyboard, { backgroundColor: 'lime' }]}>
+          <TextInput style={styles.input} placeholder={'test keyboard instes'} textAlignVertical="center" />
+          <SafeAreaView edges={['bottom']} />
+        </KeyboardInsetsView>
+      </KeyboardInsetsView>
+    </SafeAreaProvider>
   )
 }
 
@@ -27,26 +46,24 @@ export default withNavigationItem({
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     justifyContent: 'flex-start',
     alignItems: 'stretch',
-    paddingTop: 16,
+    paddingBottom: 16,
   },
-  button: {
-    alignItems: 'center',
-    justifyContent: 'center',
+
+  input: {
     height: 40,
+    marginHorizontal: 48,
+    marginTop: 16,
+    marginBottom: 0,
+    paddingLeft: 8,
+    paddingRight: 8,
+    borderColor: '#cccccc',
+    borderWidth: 1,
   },
 
-  buttonText: {
-    backgroundColor: 'transparent',
-    color: 'rgb(34,88,220)',
-  },
-
-  welcome: {
-    backgroundColor: 'transparent',
-    fontSize: 17,
-    textAlign: 'center',
-    margin: 8,
+  keyboard: {
+    paddingBottom: 16,
+    backgroundColor: 'bisque',
   },
 })

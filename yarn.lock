@@ -3408,10 +3408,10 @@ human-signals@^1.1.1:
   resolved "https://registry.yarnpkg.com/human-signals/-/human-signals-1.1.1.tgz#c5b1cd14f50aeae09ab6c59fe63ba3395fe4dfa3"
   integrity sha512-SEQu7vl8KjNL2eoGBLF3+wAjpsNfA9XMlXAYj/3EdaNfAlxKthD1xjEQfGOUhllCGGJVNY34bRr6lPINhNjyZw==
 
-hybrid-navigation@^2.9.0:
-  version "2.13.18"
-  resolved "https://registry.yarnpkg.com/hybrid-navigation/-/hybrid-navigation-2.13.18.tgz#f9f9fad2dc3fde2e9876fb365d2020128037e55e"
-  integrity sha512-SIGhnB7lH9pfVYuh8HDu57loB0K/GvXq/djsyLhDW4gzOtDoHmhiQu7PyhETqIElCHp8HghW4CWRtI5hMeMLRw==
+hybrid-navigation@2.14.0-rc.5:
+  version "2.14.0-rc.5"
+  resolved "https://registry.yarnpkg.com/hybrid-navigation/-/hybrid-navigation-2.14.0-rc.5.tgz#04b19f15a69a81748691d1772e2d59fee883deb0"
+  integrity sha512-vsgSeX/Z72T+nL0c5vfgPJz5iZqdophybGo8R/dNzAFNr9noYufY1J1E+X+EAfaS8vdDU1qINvHrPi7iXi5anw==
   dependencies:
     path-to-regexp "^6.1.0"
 
@@ -5509,6 +5509,11 @@ react-native-codegen@^0.0.8:
     flow-parser "^0.121.0"
     jscodeshift "^0.11.0"
     nullthrows "^1.1.1"
+
+react-native-safe-area-context@^4.5.0:
+  version "4.5.0"
+  resolved "https://registry.yarnpkg.com/react-native-safe-area-context/-/react-native-safe-area-context-4.5.0.tgz#9208313236e8f49e1920ac1e2a2c975f03aed284"
+  integrity sha512-0WORnk9SkREGUg2V7jHZbuN5x4vcxj/1B0QOcXJjdYWrzZHgLcUzYWWIUecUPJh747Mwjt/42RZDOaFn3L8kPQ==
 
 react-native@0.67.4:
   version "0.67.4"

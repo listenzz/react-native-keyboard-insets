@@ -11,7 +11,7 @@ PODS:
     - ReactCommon/turbomodule/core (= 0.67.4)
   - fmt (6.2.1)
   - glog (0.3.5)
-  - HybridNavigation (2.13.18):
+  - HybridNavigation (2.14.0-rc.5):
     - React-Core
   - RCT-Folly (2021.06.28.00-v2):
     - boost
@@ -211,6 +211,12 @@ PODS:
   - React-jsinspector (0.67.4)
   - React-logger (0.67.4):
     - glog
+  - react-native-safe-area-context (4.5.0):
+    - RCT-Folly
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Core
+    - ReactCommon/turbomodule/core
   - React-perflogger (0.67.4)
   - React-RCTActionSheet (0.67.4):
     - React-Core/RCTActionSheetHeaders (= 0.67.4)
@@ -301,6 +307,7 @@ DEPENDENCIES:
   - React-jsiexecutor (from `../../node_modules/react-native/ReactCommon/jsiexecutor`)
   - React-jsinspector (from `../../node_modules/react-native/ReactCommon/jsinspector`)
   - React-logger (from `../../node_modules/react-native/ReactCommon/logger`)
+  - react-native-safe-area-context (from `../../node_modules/react-native-safe-area-context`)
   - React-perflogger (from `../../node_modules/react-native/ReactCommon/reactperflogger`)
   - React-RCTActionSheet (from `../../node_modules/react-native/Libraries/ActionSheetIOS`)
   - React-RCTAnimation (from `../../node_modules/react-native/Libraries/NativeAnimation`)
@@ -357,6 +364,8 @@ EXTERNAL SOURCES:
     :path: "../../node_modules/react-native/ReactCommon/jsinspector"
   React-logger:
     :path: "../../node_modules/react-native/ReactCommon/logger"
+  react-native-safe-area-context:
+    :path: "../../node_modules/react-native-safe-area-context"
   React-perflogger:
     :path: "../../node_modules/react-native/ReactCommon/reactperflogger"
   React-RCTActionSheet:
@@ -393,7 +402,7 @@ SPEC CHECKSUMS:
   FBReactNativeSpec: 0f4e1f4cfeace095694436e7c7fcc5bf4b03a0ff
   fmt: ff9d55029c625d3757ed641535fd4a75fedc7ce9
   glog: 85ecdd10ee8d8ec362ef519a6a45ff9aa27b2e85
-  HybridNavigation: 7a73b130bcf4e49c4b8f9166f708aa71fe343353
+  HybridNavigation: 834d01f6cf7ecea11b85580843ae9be780602398
   RCT-Folly: 803a9cfd78114b2ec0f140cfa6fa2a6bafb2d685
   RCTRequired: 0aa6c1c27e1d65920df35ceea5341a5fe76bdb79
   RCTTypeSafety: d76a59d00632891e11ed7522dba3fd1a995e573a
@@ -406,6 +415,7 @@ SPEC CHECKSUMS:
   React-jsiexecutor: cbdf37cebdc4f5d8b3d0bf5ccaa6147fd9de9f3d
   React-jsinspector: f4775ea9118cbe1f72b834f0f842baa7a99508d8
   React-logger: a1f028f6d8639a3f364ef80419e5e862e1115250
+  react-native-safe-area-context: 39c2d8be3328df5d437ac1700f4f3a4f75716acc
   React-perflogger: 0afaf2f01a47fd0fc368a93bfbb5bd3b26db6e7f
   React-RCTActionSheet: 59f35c4029e0b532fc42114241a06e170b7431a2
   React-RCTAnimation: aae4f4bed122e78bdab72f7118d291d70a932ce2

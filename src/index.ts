@@ -1,9 +1,5 @@
-import { NativeModules } from 'react-native'
+import { KeyboardInsetsView } from './KeyboardInsetsView'
+import { getEdgeInsetsForView } from './native'
+import { useKeyboardHeight, useKeyboardInsets } from './context'
 
-const { RNKeyboardInsets } = NativeModules
-
-export default RNKeyboardInsets
-
-export function lib(a: number, b: number) {
-  return a + b + 2
-}
+export { KeyboardInsetsView, getEdgeInsetsForView, useKeyboardHeight, useKeyboardInsets }
