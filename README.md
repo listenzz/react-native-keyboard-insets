@@ -36,7 +36,7 @@ public class MainActivity extends ReactActivity {
 }
 ```
 
-To achieve the best backward compatibility with this AndroidX implementation, set android:windowSoftInputMode="adjustResize" to the activity in AndroidManifest.xml.
+为了更好的向后（Android 10 以前）兼容, 在 AndroidManifest 中设置 `android:windowSoftInputMode="adjustResize"`。
 
 ```xml
 <!-- AndroidManifest.xml -->
@@ -50,9 +50,9 @@ To achieve the best backward compatibility with this AndroidX implementation, se
 </activity>
 ```
 
-开启 Edge-to-Edge 后，你的 UI 会撑满整个屏幕，你需要使用 [react-native-safe-area-context](https://github.com/th3rdwave/react-native-safe-area-context) 来处理和系统 UI (譬如虚拟导航键) 重叠的部分。
+开启 Edge-to-Edge 后，你的 UI 会撑满整个屏幕，需要使用 [react-native-safe-area-context](https://github.com/th3rdwave/react-native-safe-area-context) 来处理和系统 UI (譬如虚拟导航键) 重叠的部分。
 
-可参考以下代码进行全局处理，也可以每个页面单独处理，以实现更美观的 UI 效果。
+可参考以下代码进行全局处理，也可以每个页面单独处理，以实现更美观更摩登的 UI 效果。
 
 ```tsx
 import { Platform } from 'react-native'
