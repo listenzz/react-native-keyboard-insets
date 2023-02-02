@@ -2,7 +2,7 @@
 
 A powerful Keyboard Aware View for React Native.
 
-支持和 ScrollView 一起使用，支持嵌套，继承于 View，可以像 View 一样使用。
+支持和 `ScrollView` 一起使用，支持嵌套，继承于 `View`，可以像 `View` 一样使用。
 
 ![README-2023-02-02-15-56-36](https://todoit.oss-cn-shanghai.aliyuncs.com/assets/README-2023-02-02-15-56-36.gif)
 
@@ -32,7 +32,7 @@ public class MainActivity extends ReactActivity {
 
 ## Usage
 
-Just Wrap Your View or ScrollView with KeyboardInsetsView. It will automatically adjust the height of the view when the keyboard is shown or hidden.
+Just wrap your `View` or `ScrollView` with `KeyboardInsetsView. It will automatically adjust the height of the view when the keyboard is shown or hidden.
 
 ```tsx
 <KeyboardInsetsView extraHeight={16} style={{ flex: 1 }}>
