@@ -12,7 +12,7 @@ RCT_EXPORT_MODULE(KeyboardInsetsView)
 RCT_EXPORT_VIEW_PROPERTY(mode, NSString)
 RCT_EXPORT_VIEW_PROPERTY(extraHeight, CGFloat)
 
-RCT_EXPORT_VIEW_PROPERTY(onInsetsChanged, RCTDirectEventBlock)
-RCT_EXPORT_VIEW_PROPERTY(onKeyboardHeightChanged, RCTDirectEventBlock)
+RCT_EXPORT_VIEW_PROPERTY(onStatusChanged, RCTDirectEventBlock)
+RCT_EXPORT_VIEW_PROPERTY(onPositionChanged, RCTDirectEventBlock)
 
 @end

@@ -7,15 +7,21 @@ import {
   ViewProps,
 } from 'react-native'
 
-export interface KeyboardHeight {
+export interface KeyboardStatus {
   height: number
+  hidden: boolean
+  transitioning: boolean
+}
+
+interface KeyboardPosition {
+  position: number
 }
 
 interface NativeKeyboardInsetsViewProps {
   mode?: 'auto' | 'manual'
   extraHeight?: number
-  onInsetsChanged?: (event: NativeSyntheticEvent<Insets>) => void
-  onKeyboardHeightChanged?: (event: NativeSyntheticEvent<KeyboardHeight>) => void
+  onStatusChanged?: (event: NativeSyntheticEvent<KeyboardStatus>) => void
+  onPositionChanged?: (event: NativeSyntheticEvent<KeyboardPosition>) => void
 }
 
 export const NativeKeyboardInsetsView = requireNativeComponent<NativeKeyboardInsetsViewProps & ViewProps>(

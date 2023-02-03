@@ -1,64 +1,61 @@
-import React, { useCallback, useMemo, useState } from 'react'
-import { Animated, Insets, NativeSyntheticEvent, ViewProps } from 'react-native'
-import { KeyboardInsetsContext } from './context'
-import { KeyboardHeight, NativeKeyboardInsetsView } from './native'
+import React, { useCallback, useMemo, useRef } from 'react'
+import { Animated, NativeSyntheticEvent, ViewProps } from 'react-native'
+import { KeyboardStatus, NativeKeyboardInsetsView } from './native'
+
+interface KeyboardState {
+  height: number
+  hidden: boolean
+  transitioning: boolean
+  position: Animated.Value
+}
 
 interface KeyboardInsetsViewProps extends ViewProps {
-  mode?: 'auto' | 'manual'
   extraHeight?: number
+  onKeyboard?: (status: KeyboardState) => void
 }
 
 const NativeKeyboardInsetsViewAnimated = Animated.createAnimatedComponent(NativeKeyboardInsetsView)
 
 export function KeyboardInsetsView(props: KeyboardInsetsViewProps) {
-  const { children, ...rest } = props
-  const insets = useMemo(
-    () => ({
-      top: new Animated.Value(0),
-      left: new Animated.Value(0),
-      right: new Animated.Value(0),
-      bottom: new Animated.Value(0),
-    }),
-    [],
-  )
+  const { children, onKeyboard, ...rest } = props
 
-  const [keyboardHeight, setKeyboardHeight] = useState(0)
+  const position = useRef(new Animated.Value(0)).current
 
-  const onInsetsChanged = useMemo(
+  const onPositionChanged = useMemo(
     () =>
-      Animated.event<Insets>(
+      Animated.event(
         [
           {
             nativeEvent: {
-              top: insets.top,
-              left: insets.left,
-              right: insets.right,
-              bottom: insets.bottom,
+              position,
             },
           },
         ],
         {
           useNativeDriver: true,
-          listener: event => {
-            console.log(event.nativeEvent)
-          },
         },
       ),
-    [insets],
+    [position],
   )
 
-  const onKeyboardHeightChanged = useCallback((event: NativeSyntheticEvent<KeyboardHeight>) => {
-    setKeyboardHeight(event.nativeEvent.height)
-  }, [])
+  const onStatusChanaged = useCallback(
+    (event: NativeSyntheticEvent<KeyboardStatus>) => {
+      onKeyboard?.({ ...event.nativeEvent, position })
+    },
+    [position, onKeyboard],
+  )
 
-  return (
-    <KeyboardInsetsContext.Provider value={{ insets, keyboardHeight }}>
+  if (onKeyboard) {
+    return (
       <NativeKeyboardInsetsViewAnimated
-        onInsetsChanged={onInsetsChanged}
-        onKeyboardHeightChanged={onKeyboardHeightChanged}
+        mode="manual"
+        onStatusChanged={onStatusChanaged}
+        onPositionChanged={onPositionChanged}
         {...rest}>
         {children}
       </NativeKeyboardInsetsViewAnimated>
-    </KeyboardInsetsContext.Provider>
-  )
+    )
+  }
+
+  return <NativeKeyboardInsetsView {...rest}>{children}</NativeKeyboardInsetsView>
 }

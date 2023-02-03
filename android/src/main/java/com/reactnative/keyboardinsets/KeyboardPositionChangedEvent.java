@@ -8,27 +8,24 @@ import com.facebook.react.uimanager.PixelUtil;
 import com.facebook.react.uimanager.events.Event;
 import com.facebook.react.uimanager.events.RCTEventEmitter;
 
-public class KeyboardInsetsChangeEvent extends Event<KeyboardInsetsChangeEvent> {
+public class KeyboardPositionChangedEvent extends Event<KeyboardPositionChangedEvent> {
 
-    private final Insets insets;
+    private final int position;
 
-    public KeyboardInsetsChangeEvent(int viewId, Insets insets) {
+    public KeyboardPositionChangedEvent(int viewId, int position) {
         super(viewId);
-        this.insets = insets;
+        this.position = position;
     }
 
     @Override
     public String getEventName() {
-        return "topInsetsChanged";
+        return "topPositionChanged";
     }
 
     @Override
     public void dispatch(RCTEventEmitter rctEventEmitter) {
         WritableMap map = Arguments.createMap();
-        map.putDouble("top", PixelUtil.toDIPFromPixel(insets.top));
-        map.putDouble("left", PixelUtil.toDIPFromPixel(insets.left));
-        map.putDouble("right", PixelUtil.toDIPFromPixel(insets.right));
-        map.putDouble("bottom", PixelUtil.toDIPFromPixel(insets.bottom));
+        map.putDouble("position", PixelUtil.toDIPFromPixel(position));
         rctEventEmitter.receiveEvent(getViewTag(), getEventName(), map);
     }
 }

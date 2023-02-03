@@ -1,6 +1,7 @@
 import { Platform } from 'react-native'
 import Navigation, { BarStyleDarkContent } from 'hybrid-navigation'
 import App from './App'
+import KeyboardChat from './KeyboardChat'
 
 Navigation.setDefaultOptions({
   screenBackgroundColor: '#F8F8F8',
@@ -10,6 +11,7 @@ Navigation.setDefaultOptions({
 
 Navigation.startRegisterComponent()
 Navigation.registerComponent('KeyboardInsets', () => App)
+Navigation.registerComponent('Chat', () => KeyboardChat)
 Navigation.endRegisterComponent()
 
 Navigation.setRoot({

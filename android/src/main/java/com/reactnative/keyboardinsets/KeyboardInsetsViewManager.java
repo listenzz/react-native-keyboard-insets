@@ -45,8 +45,8 @@ public class KeyboardInsetsViewManager extends ViewGroupManager<KeyboardInsetsVi
     @Override
     public Map<String, Object> getExportedCustomDirectEventTypeConstants() {
         return MapBuilder.of(
-            "topInsetsChanged", MapBuilder.of("registrationName", "onInsetsChanged"),
-            "topKeyboardHeightChanged", MapBuilder.of("registrationName", "onKeyboardHeightChanged")
+            "topStatusChanged", MapBuilder.of("registrationName", "onStatusChanged"),
+            "topPositionChanged", MapBuilder.of("registrationName", "onPositionChanged")
         );
     }
     

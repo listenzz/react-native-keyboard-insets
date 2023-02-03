@@ -75,28 +75,109 @@ function App() {
 Just wrap your `View` or `ScrollView` with `KeyboardInsetsView`. It will automatically adjust the height of the view when the keyboard is shown or hidden.
 
 ```tsx
-<KeyboardInsetsView extraHeight={16} style={{ flex: 1 }}>
-  <ScrollView>
-    ...
-    <TextInput />
-    ...
-  </ScrollView>
-</KeyboardInsetsView>
+import { KeyboardInsetsView } from 'react-native-keyboard-insets'
+
+function MyComponent() {
+  return (
+    <KeyboardInsetsView extraHeight={16} style={{ flex: 1 }}>
+      <ScrollView>
+        ...
+        <TextInput />
+        ...
+      </ScrollView>
+    </KeyboardInsetsView>
+  )
+}
 ```
 
 Support Nested.
 
 ```tsx
-<KeyboardInsetsView extraHeight={16} style={{ flex: 1 }}>
-  ...
-  <KeyboardInsetsView extraHeight={8}>
-    <TextInput />
-  </KeyboardInsetsView>
-  ...
-</KeyboardInsetsView>
+import { KeyboardInsetsView } from 'react-native-keyboard-insets'
+
+function MyComponent() {
+  return (
+    <KeyboardInsetsView extraHeight={16} style={{ flex: 1 }}>
+      ...
+      <KeyboardInsetsView extraHeight={8}>
+        <TextInput />
+      </KeyboardInsetsView>
+      ...
+    </KeyboardInsetsView>
+  )
+}
 ```
 
-**KeyboardInsetsView** 本质上是个 `View`，所以你可以使用 `View` 的所有属性，也可以和 `View` 互相替换。
+`KeyboardInsetsView` 本质上是个 `View`，所以你可以使用 `View` 的所有属性，也可以和 `View` 互相替换。
+
+`KeyboardInsetsView` 有两个额外的属性：
+
+- `extraHeight`：自动模式下，键盘总是紧贴着输入框的下边缘，这个属性设置输入框距离键盘的额外高度。
+
+- `onKeyboard`：是个回调函数，一旦设置，就进入手动模式，`KeyboardInsetsView` 不会帮你调整输入框的位置。你需要利用这个回调函数实现自己想要的效果。
+
+  `onKeyboard` 的参数声明如下：
+
+  ```tsx
+  interface KeyboardState {
+    height: number // 键盘的高度，不会因为键盘隐藏而变为 0
+    hidden: boolean // 当键盘将隐已隐时，这个值为 true；当键盘将显已显时，这个值为 false
+    transitioning: boolean // 键盘是否正在显示或隐藏
+    position: Animated.Value // 键盘的位置，从 0 到 height，可以用来实现动画效果
+  }
+  ```
+
+## API
+
+- `useKeyboard`
+
+  为了方便用户编写回调，`KeyboardInsetsView` 也提供了一个 `useKeyboard` hook，使用方法如下：
+
+  ```tsx
+  import { useKeyboard } from 'react-native-keyboard-insets'
+
+  function MyComponent() {
+    const { keyboard, onKeyboard } = useKeyboard()
+
+    console.log(keyboard.height), // 键盘的高度
+
+    return (
+      <KeyboardInsetsView onKeyboard={onKeyboard}>
+        <TextInput />
+      </KeyboardInsetsView>
+    )
+  }
+  ```
+
+- `getEdgeInsetsForView`
+
+  有时候你需要知道某个 `View` 距离屏幕四边的距离，这个时候就可以使用 `getEdgeInsetsForView` 方法。
+
+  ```tsx
+  import { getEdgeInsetsForView } from 'react-native-keyboard-insets'
+
+  function MyComponent() {
+    const inputRef = useRef<TextInput>(null)
+
+    const onLayout = useCallback(() => {
+      const viewTag = findNodeHandle(inputRef.current)
+      if (viewTag === null) {
+        return
+      }
+
+      // 获得 TextInput 距离屏幕四边的距离
+      getEdgeInsetsForView(viewTag, insets => {
+        console.log('insets', insets)
+      })
+    }, [])
+
+    return (
+      <View>
+        <TextInput ref={inputRef} onLayout={onLayout} />
+      </View>
+    )
+  }
+  ```
 
 ## 运行 example 项目
 

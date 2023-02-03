@@ -42,6 +42,12 @@ export default withNavigationItem({
   titleItem: {
     title: 'KeyboardInsets 演示',
   },
+  rightBarButtonItem: {
+    title: 'chat',
+    action: navigator => {
+      navigator.push('Chat')
+    },
+  },
 })(App)
 
 const styles = StyleSheet.create({

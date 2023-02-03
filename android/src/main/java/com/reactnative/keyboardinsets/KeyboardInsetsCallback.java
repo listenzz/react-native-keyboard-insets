@@ -11,21 +11,19 @@ import androidx.core.view.WindowInsetsAnimationCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.facebook.common.logging.FLog;
-import com.facebook.react.bridge.Arguments;
-import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.uimanager.PixelUtil;
 import com.facebook.react.uimanager.ThemedReactContext;
 import com.facebook.react.uimanager.UIManagerHelper;
+import com.facebook.react.uimanager.events.Event;
 import com.facebook.react.uimanager.events.EventDispatcher;
-import com.facebook.react.uimanager.events.RCTEventEmitter;
 
 import java.util.List;
 
 public class KeyboardInsetsCallback extends WindowInsetsAnimationCompat.Callback implements OnApplyWindowInsetsListener {
-    
+
     private final KeyboardInsetsView view;
     private final ThemedReactContext reactContext;
-    
+
     public KeyboardInsetsCallback(KeyboardInsetsView view, ThemedReactContext reactContext) {
         super(WindowInsetsAnimationCompat.Callback.DISPATCH_MODE_CONTINUE_ON_SUBTREE);
         this.view = view;
@@ -34,6 +32,7 @@ public class KeyboardInsetsCallback extends WindowInsetsAnimationCompat.Callback
 
     private View focusView;
     private boolean transitioning;
+    private int keyboardHeight;
 
     @Override
     public void onPrepare(@NonNull WindowInsetsAnimationCompat animation) {
@@ -46,23 +45,21 @@ public class KeyboardInsetsCallback extends WindowInsetsAnimationCompat.Callback
         if (SystemUI.isImeVisible(view)) {
             focusView = view.findFocus();
         }
-        
+
         if (!shouldHandleKeyboardTransition(focusView)) {
             return super.onStart(animation, bounds);
         }
 
-        FLog.w("KeyboardInsets", "WindowInsetsAnimation.Callback onStart");
-        
+        FLog.i("KeyboardInsets", "WindowInsetsAnimation.Callback onStart");
+
         if (SystemUI.isImeVisible(view)) {
-            int keyboardHeight = SystemUI.imeHeight(view);
-            WritableMap map = Arguments.createMap();
-            map.putDouble("height", PixelUtil.toDIPFromPixel(keyboardHeight));
-            reactContext.getJSModule(RCTEventEmitter.class).receiveEvent(
-                view.getId(),
-                "topKeyboardHeightChanged",
-                map);
+            keyboardHeight = SystemUI.imeHeight(view);
         }
-        
+
+        if (!view.isAutoMode()) {
+            sendEvent(new KeyboardStatusChangedEvent(view.getId(), keyboardHeight, !SystemUI.isImeVisible(view), transitioning));
+        }
+
         return super.onStart(animation, bounds);
     }
 
@@ -70,14 +67,19 @@ public class KeyboardInsetsCallback extends WindowInsetsAnimationCompat.Callback
     public void onEnd(@NonNull WindowInsetsAnimationCompat animation) {
         super.onEnd(animation);
         transitioning = false;
-        
+
         if (!shouldHandleKeyboardTransition(focusView)) {
             return;
         }
-        
-        FLog.w("KeyboardInsets", "WindowInsetsAnimation.Callback onEnd");
+
+        FLog.i("KeyboardInsets", "WindowInsetsAnimation.Callback onEnd");
+
         if (!SystemUI.isImeVisible(view)) {
             focusView = null;
+        }
+
+        if (!view.isAutoMode()) {
+            sendEvent(new KeyboardStatusChangedEvent(view.getId(), keyboardHeight, !SystemUI.isImeVisible(view), transitioning));
         }
     }
 
@@ -87,27 +89,46 @@ public class KeyboardInsetsCallback extends WindowInsetsAnimationCompat.Callback
         if (!shouldHandleKeyboardTransition(focusView)) {
             return insets;
         }
-        
+
         handleKeyboardTransition(insets);
-        
+
         return WindowInsetsCompat.CONSUMED;
     }
 
     @Override
     public WindowInsetsCompat onApplyWindowInsets(View v, WindowInsetsCompat insets) {
-        if (!transitioning) {
-            if (focusView == null) {
-                // Android 10 以下，首次弹出键盘时，不会触发 WindowInsetsAnimationCompat.Callback
-                focusView = view.findFocus();
-            }
-            if (shouldHandleKeyboardTransition(focusView)) {
-                FLog.w("KeyboardInsets", "onApplyWindowInsets " + insets);
-                handleKeyboardTransition(insets);
-            }
+        if (transitioning) {
+            return insets;
         }
+
+        if (focusView == null) {
+            // Android 10 以下，首次弹出键盘时，不会触发 WindowInsetsAnimationCompat.Callback
+            focusView = view.findFocus();
+        }
+
+        if (shouldHandleKeyboardTransition(focusView)) {
+            Insets imeInsets = insets.getInsets(WindowInsetsCompat.Type.ime());
+
+            FLog.i("KeyboardInsets", "onApplyWindowInsets imeInsets" + imeInsets);
+
+            keyboardHeight = SystemUI.imeHeight(view);
+
+            if (!view.isAutoMode()) {
+                sendEvent(new KeyboardStatusChangedEvent(view.getId(), keyboardHeight, !SystemUI.isImeVisible(view), true));
+            }
+
+            handleKeyboardTransition(insets);
+
+            if (!view.isAutoMode()) {
+                sendEvent(new KeyboardStatusChangedEvent(view.getId(), keyboardHeight, !SystemUI.isImeVisible(view), false));
+            }
+
+            return WindowInsetsCompat.CONSUMED;
+        }
+
         return insets;
     }
-    
+
     private void handleKeyboardTransition(WindowInsetsCompat insets) {
         Insets imeInsets = insets.getInsets(WindowInsetsCompat.Type.ime());
         if (view.isAutoMode()) {
@@ -117,11 +138,16 @@ public class KeyboardInsetsCallback extends WindowInsetsAnimationCompat.Callback
             view.setTranslationY(-Math.max(imeInsets.bottom - edgeInsets.bottom + extraHeight, 0));
 
         } else {
-            EventDispatcher eventDispatcher = UIManagerHelper.getEventDispatcherForReactTag(reactContext, view.getId());
-            eventDispatcher.dispatchEvent(new KeyboardInsetsChangeEvent(view.getId(), imeInsets));
+            Log.d("KeyboardInsets", "imeInsets.bottom:" + imeInsets.bottom);
+            sendEvent(new KeyboardPositionChangedEvent(view.getId(), imeInsets.bottom));
         }
     }
-    
+
+    private void sendEvent(Event<?> event) {
+        EventDispatcher eventDispatcher = UIManagerHelper.getEventDispatcherForReactTag(reactContext, view.getId());
+        eventDispatcher.dispatchEvent(event);
+    }
+
     private boolean shouldHandleKeyboardTransition(View focus) {
         if (focus != null) {
             KeyboardInsetsView insetsView = findClosestKeyboardInsetsView(focus);
@@ -142,5 +168,5 @@ public class KeyboardInsetsCallback extends WindowInsetsAnimationCompat.Callback
 
         return null;
     }
-    
+
 }

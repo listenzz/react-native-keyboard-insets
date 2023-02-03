@@ -5,8 +5,8 @@ NS_ASSUME_NONNULL_BEGIN
 @interface HBDKeyboardInsetsView : RCTView
 
 
-@property(nonatomic, copy) RCTDirectEventBlock onInsetsChanged;
-@property(nonatomic, copy) RCTDirectEventBlock onKeyboardHeightChanged;
+@property(nonatomic, copy) RCTDirectEventBlock onStatusChanged;
+@property(nonatomic, copy) RCTDirectEventBlock onPositionChanged;
 
 @property(nonatomic, copy) NSString *mode;
 @property(nonatomic, assign) CGFloat extraHeight;
