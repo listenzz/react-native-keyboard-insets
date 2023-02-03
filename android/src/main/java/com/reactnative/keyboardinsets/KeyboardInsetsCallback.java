@@ -95,9 +95,15 @@ public class KeyboardInsetsCallback extends WindowInsetsAnimationCompat.Callback
 
     @Override
     public WindowInsetsCompat onApplyWindowInsets(View v, WindowInsetsCompat insets) {
-        if (shouldHandleKeyboardTransition(focusView) && !transitioning) {
-            FLog.w("KeyboardInsets", "onApplyWindowInsets " + insets);
-            handleKeyboardTransition(insets);
+        if (!transitioning) {
+            if (focusView == null) {
+                // Android 10 以下，首次弹出键盘时，不会触发 WindowInsetsAnimationCompat.Callback
+                focusView = view.findFocus();
+            }
+            if (shouldHandleKeyboardTransition(focusView)) {
+                FLog.w("KeyboardInsets", "onApplyWindowInsets " + insets);
+                handleKeyboardTransition(insets);
+            }
         }
         return insets;
     }
