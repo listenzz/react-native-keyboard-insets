@@ -20,7 +20,7 @@ yarn add react-native-keyboard-insets
 
 ### Android
 
-Before setting up control and animation for the software keyboard, configure your app to [display edge-to-edge](https://developer.android.com/develop/ui/views/layout/edge-to-edge). This allows it to handle system window insets such as the system bars and the on-screen keyboard.
+开启 [edge-to-edge](https://developer.android.com/develop/ui/views/layout/edge-to-edge)。 这将使得 APP 的 UI 撑满整个屏幕，而不是被系统 UI（譬如虚拟导航键）遮挡，从而实现更摩登的 UI 效果。
 
 ```java
 // MainActivity.java
@@ -72,7 +72,7 @@ function App() {
 
 ## Usage
 
-Just wrap your `View` or `ScrollView` with `KeyboardInsetsView`. It will automatically adjust the height of the view when the keyboard is shown or hidden.
+使用 `KeyboardInsetsView` 代替 `View` 作为容器，或者使用 `KeyboardInsetsView` 将 `ScrollView` 包裹起来。当键盘显示或隐藏时，`KeyboardInsetsView` 会自动调整自身的位置，以保证输入框不被键盘遮挡。
 
 ```tsx
 import { KeyboardInsetsView } from 'react-native-keyboard-insets'
@@ -131,7 +131,7 @@ function MyComponent() {
 
 - `useKeyboard`
 
-  为了方便用户编写 `onKeyboard` 回调，`KeyboardInsetsView` 提供了一个 `useKeyboard` hook，使用方法如下：
+  为了方便用户编写 `onKeyboard` 回调，keyboard-insets 提供了一个 `useKeyboard` hook，使用方法如下：
 
   ```tsx
   import { useKeyboard } from 'react-native-keyboard-insets'
