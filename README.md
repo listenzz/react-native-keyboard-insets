@@ -6,7 +6,7 @@ A powerful Keyboard Aware View for React Native.
 
 ![README-2023-02-02-15-56-36](https://todoit.oss-cn-shanghai.aliyuncs.com/assets/README-2023-02-02-15-56-36.gif)
 
-本库主要依据 Google 官方指南 [Synchronize animation with the software keyboard](https://developer.android.com/develop/ui/views/layout/sw-keyboard#synchronize-animation) 来实现，同时参考了 [react-native-keyboard-controller](https://github.com/kirillzyusko/react-native-keyboard-controller)。因为该库不是很符合我的需求，所以我自己写了一个。
+本库主要依据 Android 官方指南 [Synchronize animation with the software keyboard](https://developer.android.com/develop/ui/views/layout/sw-keyboard#synchronize-animation) 来实现，同时参考了 [react-native-keyboard-controller](https://github.com/kirillzyusko/react-native-keyboard-controller)。因为该库不是很符合我的需求，所以我自己写了一个。
 
 ## Installation
 
@@ -50,7 +50,7 @@ public class MainActivity extends ReactActivity {
 </activity>
 ```
 
-开启 Edge-to-Edge 后，你的 UI 会撑满整个屏幕，需要使用 [react-native-safe-area-context](https://github.com/th3rdwave/react-native-safe-area-context) 来处理和系统 UI (譬如虚拟导航键) 重叠的部分。
+开启 Edge-to-Edge 后，你的 UI 会撑满整个屏幕，可使用 [react-native-safe-area-context](https://github.com/th3rdwave/react-native-safe-area-context) 来处理和系统 UI (譬如虚拟导航键) 重叠的部分。
 
 可参考以下代码进行全局处理，也可以每个页面单独处理，以实现更美观更摩登的 UI 效果。
 
@@ -131,7 +131,7 @@ function MyComponent() {
 
 - `useKeyboard`
 
-  为了方便用户编写回调，`KeyboardInsetsView` 也提供了一个 `useKeyboard` hook，使用方法如下：
+  为了方便用户编写 `onKeyboard` 回调，`KeyboardInsetsView` 提供了一个 `useKeyboard` hook，使用方法如下：
 
   ```tsx
   import { useKeyboard } from 'react-native-keyboard-insets'
