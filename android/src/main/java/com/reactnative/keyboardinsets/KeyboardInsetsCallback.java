@@ -104,6 +104,15 @@ public class KeyboardInsetsCallback extends WindowInsetsAnimationCompat.Callback
         if (focusView == null) {
             // Android 10 以下，首次弹出键盘时，不会触发 WindowInsetsAnimationCompat.Callback
             focusView = view.findFocus();
+        } else {
+            View currentFocus = view.findFocus();
+            if ((currentFocus != null && focusView != currentFocus)) {
+                KeyboardInsetsView keyboardInsetsView = findClosestKeyboardInsetsView(focusView);
+                if (keyboardInsetsView != null && keyboardInsetsView.isAutoMode()) {
+                    keyboardInsetsView.setTranslationY(0);
+                }
+                focusView = currentFocus;
+            }
         }
 
         if (shouldHandleKeyboardTransition(focusView)) {

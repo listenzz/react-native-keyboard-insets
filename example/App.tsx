@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { Fragment, useRef } from 'react'
 import { withNavigationItem } from 'hybrid-navigation'
 import { StyleSheet, TextInput, ScrollView } from 'react-native'
 import { KeyboardInsetsView } from 'react-native-keyboard-insets'
@@ -7,16 +7,9 @@ import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context'
 function App() {
   return (
     <SafeAreaProvider>
-      <KeyboardInsetsView extraHeight={16} style={{ flex: 1 }}>
+      <KeyboardInsetsView extraHeight={16} style={styles.flex1}>
         <ScrollView contentContainerStyle={styles.container}>
-          {Array.from({ length: 9 }).map((item, index) => (
-            <TextInput
-              key={index}
-              style={styles.input}
-              placeholder={`test keyboard instes ${index}`}
-              textAlignVertical="center"
-            />
-          ))}
+          <SubmitToNextInputFragment />
           <KeyboardInsetsView extraHeight={16} style={styles.keyboard}>
             <TextInput style={styles.input} placeholder={'test keyboard instes'} textAlignVertical="center" />
           </KeyboardInsetsView>
@@ -29,12 +22,39 @@ function App() {
             />
           ))}
         </ScrollView>
-        <KeyboardInsetsView extraHeight={16} style={[styles.keyboard, { backgroundColor: 'lime' }]}>
+        <KeyboardInsetsView extraHeight={16} style={[styles.keyboard, styles.backgroundLime]}>
           <TextInput style={styles.input} placeholder={'test keyboard instes'} textAlignVertical="center" />
           <SafeAreaView edges={['bottom']} />
         </KeyboardInsetsView>
       </KeyboardInsetsView>
     </SafeAreaProvider>
+  )
+}
+
+const inputLength = 9
+function SubmitToNextInputFragment() {
+  const inputRef = useRef<(TextInput | null)[]>([...Array(inputLength)])
+  const goNextInput = (index: number) => {
+    if (index !== inputLength - 1) {
+      inputRef.current[index + 1]?.focus()
+    }
+  }
+  return (
+    <Fragment>
+      {Array.from({ length: inputLength }).map((_, index) => (
+        <TextInput
+          ref={ref => (inputRef.current[index] = ref)}
+          key={index}
+          style={styles.input}
+          placeholder={index === inputLength - 1 ? 'submit' : `current:${index} => submit and next`}
+          textAlignVertical="center"
+          blurOnSubmit={index === inputLength - 1}
+          autoCorrect={false}
+          returnKeyType={index === inputLength - 1 ? 'done' : 'next'}
+          onSubmitEditing={() => goNextInput(index)}
+        />
+      ))}
+    </Fragment>
   )
 }
 
@@ -51,6 +71,12 @@ export default withNavigationItem({
 })(App)
 
 const styles = StyleSheet.create({
+  flex1: {
+    flex: 1,
+  },
+  backgroundLime: {
+    backgroundColor: 'lime',
+  },
   container: {
     justifyContent: 'flex-start',
     alignItems: 'stretch',
@@ -58,7 +84,7 @@ const styles = StyleSheet.create({
   },
 
   input: {
-    height: 40,
+    height: 80,
     marginHorizontal: 48,
     marginTop: 16,
     marginBottom: 0,
