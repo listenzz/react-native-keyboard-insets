@@ -282,7 +282,7 @@ PODS:
     - React-jsi (= 0.67.4)
     - React-logger (= 0.67.4)
     - React-perflogger (= 0.67.4)
-  - RNKeyboardInsets (1.0.1):
+  - RNKeyboardInsets (1.1.0):
     - React-Core
   - Yoga (1.14.0)
 
@@ -428,9 +428,9 @@ SPEC CHECKSUMS:
   React-RCTVibration: 3b52a7dced19cdb025b4f88ab26ceb2d85f30ba2
   React-runtimeexecutor: a9d3c82ddf7ffdad9fbe6a81c6d6f8c06385464d
   ReactCommon: 07d0c460b9ba9af3eaf1b8f5abe7daaad28c9c4e
-  RNKeyboardInsets: 6abccdbd2020721417a50b634169496a08df9dd0
+  RNKeyboardInsets: 885efbfa90f79a532c23251937afde83240142fd
   Yoga: d6b6a80659aa3e91aaba01d0012e7edcbedcbecd
 
-PODFILE CHECKSUM: 5f8e27516be9e29e667680d1a90470ffeb5a4037
+PODFILE CHECKSUM: a528f2e9b1fc1781e92492211061ea07bb9b767a
 
 COCOAPODS: 1.11.3

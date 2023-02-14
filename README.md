@@ -112,7 +112,7 @@ function MyComponent() {
 
 `KeyboardInsetsView` 有两个额外的属性：
 
-- `extraHeight`：自动模式下，键盘总是紧贴着输入框的下边缘，这个属性设置输入框距离键盘的额外高度。
+- `extraHeight`：自动模式下，键盘总是紧贴着输入框的下边缘，这个属性设置输入框距离键盘的额外高度。<u>KeyboardInsetsView 的最大偏移受键盘高度限制，若加入额外高度后，KeyboardInsetsView 偏移距离大于键盘高度，将产生截断，此时 KeyboardInsetsView 偏移距离等于键盘高度，底部将与键盘顶部相贴</u>
 
 - `onKeyboard`：是个回调函数，一旦设置，就进入手动模式，`KeyboardInsetsView` 不会帮你调整输入框的位置。你需要利用这个回调函数实现自己想要的效果。
 

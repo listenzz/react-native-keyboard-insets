@@ -104,6 +104,15 @@ public class KeyboardInsetsCallback extends WindowInsetsAnimationCompat.Callback
         if (focusView == null) {
             // Android 10 以下，首次弹出键盘时，不会触发 WindowInsetsAnimationCompat.Callback
             focusView = view.findFocus();
+        } else {
+            View currentFocus = view.findFocus();
+            if ((currentFocus != null && focusView != currentFocus)) {
+                KeyboardInsetsView keyboardInsetsView = findClosestKeyboardInsetsView(focusView);
+                if (keyboardInsetsView != null && keyboardInsetsView.isAutoMode()) {
+                    keyboardInsetsView.setTranslationY(0);
+                }
+                focusView = currentFocus;
+            }
         }
 
         if (shouldHandleKeyboardTransition(focusView)) {
@@ -135,8 +144,12 @@ public class KeyboardInsetsCallback extends WindowInsetsAnimationCompat.Callback
             EdgeInsets edgeInsets = SystemUI.getEdgeInsetsForView(focusView);
             float extraHeight = PixelUtil.toPixelFromDIP(view.getExtraHeight());
             Log.d("KeyboardInsets", "edgeInsets.bottom:" + edgeInsets.bottom + " imeInsets.bottom:" + imeInsets.bottom);
-            view.setTranslationY(-Math.max(imeInsets.bottom - edgeInsets.bottom + extraHeight, 0));
-
+            float translationY = 0;
+            if (imeInsets.bottom > 0) {
+                float actualBottomInset = Math.max(edgeInsets.bottom - extraHeight, 0);
+                translationY = -Math.max(imeInsets.bottom - actualBottomInset, 0);
+            }
+            view.setTranslationY(translationY);
         } else {
             Log.d("KeyboardInsets", "imeInsets.bottom:" + imeInsets.bottom);
             sendEvent(new KeyboardPositionChangedEvent(view.getId(), imeInsets.bottom));

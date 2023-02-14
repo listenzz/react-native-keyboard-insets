@@ -72,19 +72,42 @@
             @"transitioning": @(YES),
         });
     }
-    
-    if ([self isAutoMode] && CGAffineTransformEqualToTransform(self.transform, CGAffineTransformIdentity)) {
-        CGRect windowFrame = [self.window convertRect:focusView.frame fromView:focusView.superview];
-        _edgeBottom = MAX(CGRectGetMaxY(self.window.bounds) - CGRectGetMaxY(windowFrame), 0);
-    }
+
+    [self refreshEdgeBottom];
     
     RCTLogInfo(@"[KeyboardInsetsView] keyboardWillShow startWatchKeyboardTransition");
     [self startWatchKeyboardTransition];
 }
 
+- (void)refreshEdgeBottom {
+    if ([self isAutoMode]) {
+        CGFloat translateY = self.transform.ty;
+        CGRect windowFrame = [self.window convertRect:_focusView.frame fromView:_focusView.superview];
+        CGFloat newEdgeBottom = MAX(CGRectGetMaxY(self.window.bounds) - CGRectGetMaxY(windowFrame) + translateY, 0);
+        if (_edgeBottom == 0 || _edgeBottom != newEdgeBottom){
+            _edgeBottom = newEdgeBottom;
+        }
+    }
+}
+
 - (void)keyboardDidShow:(NSNotification *)notification {
     if ([self shouldHandleKeyboardTransition:_focusView]) {
+        UIView *focusView = [HBDKeyboardInsetsView findFocusView:self];
         [self stopWatchKeyboardTransition];
+        if (!focusView) {
+            [self handleKeyboardTransition:0];
+            _focusView = nil;
+            return;
+        }else if (_focusView != focusView) {
+            HBDKeyboardInsetsView *keyboardInsetsView = [HBDKeyboardInsetsView findClosetKeyboardInsetsView:focusView];
+            if (self != keyboardInsetsView) {
+                [self handleKeyboardTransition:0];
+                [keyboardInsetsView refreshEdgeBottom];
+                [keyboardInsetsView handleKeyboardTransition:_keyboardHeight];
+            }
+            _focusView = focusView;
+            return;
+        }
         [self handleKeyboardTransition:_keyboardHeight];
         
         if (![self isAutoMode]) {
@@ -117,9 +140,8 @@
 
 
 - (void)keyboardDidHide:(NSNotification *)notification {
+    [self stopWatchKeyboardTransition];
     if ([self shouldHandleKeyboardTransition:_focusView]) {
-        
-        [self stopWatchKeyboardTransition];
         [self handleKeyboardTransition:0];
         
         if (![self isAutoMode]) {
@@ -154,8 +176,10 @@
 }
 
 - (void)stopWatchKeyboardTransition {
-    [_displayLink invalidate];
-    _displayLink = nil;
+    if(_displayLink){
+        [_displayLink invalidate];
+        _displayLink = nil;
+    }
 }
 
 - (void)watchKeyboardTransition {
@@ -171,7 +195,11 @@
 - (void)handleKeyboardTransition:(CGFloat)position {
     if ([self isAutoMode]) {
         if (_focusView) {
-            CGFloat translationY = -MAX(position - _edgeBottom + self.extraHeight, 0);
+            CGFloat translationY = 0;
+            if (position > 0) {
+                CGFloat actualEdgeBottom = MAX(_edgeBottom - _extraHeight, 0);
+                translationY = -MAX(position - actualEdgeBottom, 0);
+            }
             self.transform = CGAffineTransformMakeTranslation(0, translationY);
         }
     } else {
