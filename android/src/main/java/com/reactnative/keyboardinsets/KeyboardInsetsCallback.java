@@ -144,8 +144,12 @@ public class KeyboardInsetsCallback extends WindowInsetsAnimationCompat.Callback
             EdgeInsets edgeInsets = SystemUI.getEdgeInsetsForView(focusView);
             float extraHeight = PixelUtil.toPixelFromDIP(view.getExtraHeight());
             Log.d("KeyboardInsets", "edgeInsets.bottom:" + edgeInsets.bottom + " imeInsets.bottom:" + imeInsets.bottom);
-            view.setTranslationY(-Math.max(imeInsets.bottom - edgeInsets.bottom + extraHeight, 0));
-
+            float translationY = 0;
+            if (imeInsets.bottom > 0) {
+                float actualBottomInset = Math.max(edgeInsets.bottom - extraHeight, 0);
+                translationY = -Math.max(imeInsets.bottom - actualBottomInset, 0);
+            }
+            view.setTranslationY(translationY);
         } else {
             Log.d("KeyboardInsets", "imeInsets.bottom:" + imeInsets.bottom);
             sendEvent(new KeyboardPositionChangedEvent(view.getId(), imeInsets.bottom));

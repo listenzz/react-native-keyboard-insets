@@ -195,7 +195,11 @@
 - (void)handleKeyboardTransition:(CGFloat)position {
     if ([self isAutoMode]) {
         if (_focusView) {
-            CGFloat translationY = -MAX(position - _edgeBottom + self.extraHeight, 0);
+            CGFloat translationY = 0;
+            if (position > 0) {
+                CGFloat actualEdgeBottom = MAX(_edgeBottom - _extraHeight, 0);
+                translationY = -MAX(position - actualEdgeBottom, 0);
+            }
             self.transform = CGAffineTransformMakeTranslation(0, translationY);
         }
     } else {

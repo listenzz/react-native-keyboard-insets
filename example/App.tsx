@@ -22,7 +22,7 @@ function App() {
             />
           ))}
         </ScrollView>
-        <KeyboardInsetsView extraHeight={16} style={[styles.keyboard, styles.backgroundLime]}>
+        <KeyboardInsetsView extraHeight={40} style={[styles.keyboard, styles.backgroundLime]}>
           <TextInput style={styles.input} placeholder={'test keyboard instes'} textAlignVertical="center" />
           <SafeAreaView edges={['bottom']} />
         </KeyboardInsetsView>
