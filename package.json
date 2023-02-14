@@ -30,7 +30,7 @@
     "build": "rm -rf ./lib && tsc -p tsconfig.build.json",
     "prepare": "npm run build",
     "tsc": "tsc",
-    "start": "react-native start --reset-cache",
+    "start": "watchman watch-del-all && react-native start --reset-cache",
     "android": "react-native run-android",
     "ios": "react-native run-ios",
     "test": "jest",
