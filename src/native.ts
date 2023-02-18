@@ -5,6 +5,7 @@ import {
   NativeSyntheticEvent,
   requireNativeComponent,
   ViewProps,
+  Animated,
 } from 'react-native'
 
 export interface KeyboardStatus {
@@ -24,9 +25,9 @@ interface NativeKeyboardInsetsViewProps {
   onPositionChanged?: (event: NativeSyntheticEvent<KeyboardPosition>) => void
 }
 
-export const NativeKeyboardInsetsView = requireNativeComponent<NativeKeyboardInsetsViewProps & ViewProps>(
-  'KeyboardInsetsView',
-)
+export const NativeKeyboardInsetsView = requireNativeComponent<
+  NativeKeyboardInsetsViewProps & Animated.AnimatedProps<ViewProps>
+>('KeyboardInsetsView')
 
 interface KeyboardInsetsModuleInterface extends NativeModule {
   getEdgeInsetsForView(viewTag: number, callback: (insets: Insets) => void): void

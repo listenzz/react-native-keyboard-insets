@@ -2,19 +2,19 @@ import React, { useCallback, useMemo, useRef } from 'react'
 import { Animated, NativeSyntheticEvent, ViewProps } from 'react-native'
 import { KeyboardStatus, NativeKeyboardInsetsView } from './native'
 
-interface KeyboardState {
+export interface KeyboardState {
   height: number
   hidden: boolean
   transitioning: boolean
   position: Animated.Value
 }
 
-interface KeyboardInsetsViewProps extends ViewProps {
+const NativeKeyboardInsetsViewAnimated = Animated.createAnimatedComponent(NativeKeyboardInsetsView)
+
+interface KeyboardInsetsViewProps extends Animated.AnimatedProps<ViewProps> {
   extraHeight?: number
   onKeyboard?: (status: KeyboardState) => void
 }
-
-const NativeKeyboardInsetsViewAnimated = Animated.createAnimatedComponent(NativeKeyboardInsetsView)
 
 export function KeyboardInsetsView(props: KeyboardInsetsViewProps) {
   const { children, onKeyboard, ...rest } = props
