@@ -123,7 +123,7 @@ function MyComponent() {
   ```tsx
   interface KeyboardState {
     height: number // 键盘的高度，不会因为键盘隐藏而变为 0
-    hidden: boolean // 当键盘将隐已隐时，这个值为 true；当键盘将显已显时，这个值为 false
+    shown: boolean // 当键盘将隐已隐时，这个值为 false；当键盘将显已显时，这个值为 true
     transitioning: boolean // 键盘是否正在显示或隐藏
     position: Animated.Value // 键盘的位置，从 0 到 height，可以用来实现动画效果
   }

@@ -4,7 +4,7 @@ import { KeyboardStatus, NativeKeyboardInsetsView } from './native'
 
 export interface KeyboardState {
   height: number
-  hidden: boolean
+  shown: boolean
   transitioning: boolean
   position: Animated.Value
 }

@@ -10,7 +10,7 @@ import {
 
 export interface KeyboardStatus {
   height: number
-  hidden: boolean
+  shown: boolean
   transitioning: boolean
 }
 

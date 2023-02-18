@@ -57,7 +57,7 @@ public class KeyboardInsetsCallback extends WindowInsetsAnimationCompat.Callback
         }
 
         if (!view.isAutoMode()) {
-            sendEvent(new KeyboardStatusChangedEvent(view.getId(), keyboardHeight, !SystemUI.isImeVisible(view), transitioning));
+            sendEvent(new KeyboardStatusChangedEvent(view.getId(), keyboardHeight, SystemUI.isImeVisible(view), transitioning));
         }
 
         return super.onStart(animation, bounds);
@@ -79,7 +79,7 @@ public class KeyboardInsetsCallback extends WindowInsetsAnimationCompat.Callback
         }
 
         if (!view.isAutoMode()) {
-            sendEvent(new KeyboardStatusChangedEvent(view.getId(), keyboardHeight, !SystemUI.isImeVisible(view), transitioning));
+            sendEvent(new KeyboardStatusChangedEvent(view.getId(), keyboardHeight, SystemUI.isImeVisible(view), transitioning));
         }
     }
 
@@ -123,13 +123,13 @@ public class KeyboardInsetsCallback extends WindowInsetsAnimationCompat.Callback
             keyboardHeight = SystemUI.imeHeight(view);
 
             if (!view.isAutoMode()) {
-                sendEvent(new KeyboardStatusChangedEvent(view.getId(), keyboardHeight, !SystemUI.isImeVisible(view), true));
+                sendEvent(new KeyboardStatusChangedEvent(view.getId(), keyboardHeight, SystemUI.isImeVisible(view), true));
             }
 
             handleKeyboardTransition(insets);
 
             if (!view.isAutoMode()) {
-                sendEvent(new KeyboardStatusChangedEvent(view.getId(), keyboardHeight, !SystemUI.isImeVisible(view), false));
+                sendEvent(new KeyboardStatusChangedEvent(view.getId(), keyboardHeight, SystemUI.isImeVisible(view), false));
             }
 
             return WindowInsetsCompat.CONSUMED;

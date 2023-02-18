@@ -3,7 +3,7 @@ import { Animated } from 'react-native'
 
 interface KeyboardState {
   height: number
-  hidden: boolean
+  shown: boolean
   transitioning: boolean
   position: Animated.Value
 }
@@ -11,7 +11,7 @@ interface KeyboardState {
 export function useKeyboard() {
   const [keyboard, setKeyboard] = useState<KeyboardState>({
     height: 0,
-    hidden: true,
+    shown: false,
     transitioning: false,
     position: new Animated.Value(0),
   })

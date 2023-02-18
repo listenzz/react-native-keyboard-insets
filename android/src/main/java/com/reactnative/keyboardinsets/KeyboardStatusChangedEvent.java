@@ -10,13 +10,13 @@ import com.facebook.react.uimanager.events.Event;
 public class KeyboardStatusChangedEvent extends Event<KeyboardStatusChangedEvent> {
 
     private final int height;
-    private final boolean hidden;
+    private final boolean shown;
     private final boolean transitioning;
 
-    public KeyboardStatusChangedEvent(int viewTag, int height, boolean hidden, boolean transitioning) {
+    public KeyboardStatusChangedEvent(int viewTag, int height, boolean shown, boolean transitioning) {
         super(viewTag);
         this.height = height;
-        this.hidden = hidden;
+        this.shown = shown;
         this.transitioning = transitioning;
     }
 
@@ -31,7 +31,7 @@ public class KeyboardStatusChangedEvent extends Event<KeyboardStatusChangedEvent
         WritableMap map = Arguments.createMap();
         map.putDouble("height", PixelUtil.toDIPFromPixel(height));
         map.putBoolean("transitioning", transitioning);
-        map.putBoolean("hidden", hidden);
+        map.putBoolean("shown", shown);
         return map;
     }
 }

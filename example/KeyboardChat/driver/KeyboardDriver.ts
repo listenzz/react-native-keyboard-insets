@@ -27,14 +27,14 @@ export class KeyboardDriver implements Driver {
 
   createCallback = (state: DriverState) => {
     return (keyboard: KeyboardState) => {
-      const { hidden, height, position } = keyboard
+      const { shown, height, position } = keyboard
 
       const { bottom, driver, setDriver, setTranslateY } = state
       this.height = height
       this.position = position
       this.senderBottom = bottom
 
-      if (!hidden) {
+      if (shown) {
         if (Platform.OS === 'android' && this.shown) {
           return
         }
@@ -50,7 +50,7 @@ export class KeyboardDriver implements Driver {
         setTranslateY(this.translateY)
       }
 
-      if (hidden) {
+      if (!shown) {
         if (Platform.OS === 'android' && !this.shown) {
           return
         }

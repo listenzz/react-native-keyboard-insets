@@ -68,7 +68,7 @@
     if (![self isAutoMode]) {
         self.onStatusChanged(@{
             @"height": @(keyboardHeight),
-            @"hidden": @(NO),
+            @"shown": @(YES),
             @"transitioning": @(YES),
         });
     }
@@ -113,7 +113,7 @@
         if (![self isAutoMode]) {
             self.onStatusChanged(@{
                 @"height": @(_keyboardHeight),
-                @"hidden": @(NO),
+                @"shown": @(YES),
                 @"transitioning": @(NO),
             });
         }
@@ -129,7 +129,7 @@
         if (![self isAutoMode]) {
             self.onStatusChanged(@{
                 @"height": @(_keyboardHeight),
-                @"hidden": @(YES),
+                @"shown": @(NO),
                 @"transitioning": @(YES),
             });
         }
@@ -147,7 +147,7 @@
         if (![self isAutoMode]) {
             self.onStatusChanged(@{
                 @"height": @(_keyboardHeight),
-                @"hidden": @(YES),
+                @"shown": @(NO),
                 @"transitioning": @(NO),
             });
         }
