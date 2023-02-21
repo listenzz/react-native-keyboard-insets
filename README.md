@@ -18,7 +18,10 @@ yarn add react-native-keyboard-insets
 
 ### iOS
 
-不需要额外配置
+```sh
+cd ios
+pod install
+```
 
 ### Android
 
