@@ -56,7 +56,7 @@ function KeyboardChat() {
           </View>
         </ScrollView>
         <View style={styles.sender} ref={senderRef} onLayout={onLayout}>
-          <TextInput ref={inputRef} style={styles.input} />
+          <TextInput ref={inputRef} style={styles.input} multiline textAlignVertical="center" />
           <Pressable style={styles.button} onPress={() => (emoji.shown ? keyboard.show() : emoji.show(driverState))}>
             <Image source={emoji.shown ? require('./icon/keyboard.png') : require('./icon/emoji.png')} />
           </Pressable>
