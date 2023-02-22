@@ -30,11 +30,13 @@ export class KeyboardDriver implements Driver {
       const { shown, height, position } = keyboard
 
       const { bottom, driver, setDriver, setTranslateY } = state
+      const heightChanged = height !== this.height
+
       this.height = height
       this.position = position
       this.senderBottom = bottom
 
-      if (shown && !this.shown) {
+      if (shown && (!this.shown || heightChanged)) {
         this.shown = true
         if (driver && driver !== this) {
           // 记录主界面当前位置
