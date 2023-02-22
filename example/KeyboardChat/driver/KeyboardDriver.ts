@@ -58,8 +58,9 @@ export class KeyboardDriver implements Driver {
   }
 
   private get translateY() {
-    console.log(this.name, 'shown', this.shown, 'height', this.height, 'y', this.y)
     const extraHeight = this.senderBottom
+    console.log(this.name, 'height', this.height, 'y', this.y, 'extraHeight', extraHeight)
+
     if (!this.shown || this.y === 0) {
       return this.position.interpolate({
         inputRange: [extraHeight, this.height],

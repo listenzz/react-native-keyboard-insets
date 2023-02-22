@@ -59,7 +59,6 @@ export class ViewDriver implements Driver {
   }
 
   toggle = (state: DriverState) => {
-    console.log('toggle', this.shown)
     this.shown ? this.hide(state) : this.show(state)
   }
 
@@ -80,7 +79,7 @@ export class ViewDriver implements Driver {
 
   private get translateY() {
     const extraHeight = this.senderBottom - this.viewBottom
-    console.log(this.name, 'shown', this.shown, 'height', this.height, 'y', this.y)
+    console.log(this.name, 'height', this.height, 'y', this.y, 'extraHeight', extraHeight)
     if (!this.shown || this.y === 0) {
       return this.position.interpolate({
         inputRange: [extraHeight, this.height],
