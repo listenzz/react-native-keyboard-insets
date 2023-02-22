@@ -131,8 +131,6 @@
 
 - (void)keyboardWillHide:(NSNotification *)notification {
     if ([self shouldHandleKeyboardTransition:_focusView]) {
-        // TODO: 检测键盘高度
-    
         _keyboardView = [HBDKeyboardInsetsView findKeyboardView];
         
         if (![self isAutoMode]) {

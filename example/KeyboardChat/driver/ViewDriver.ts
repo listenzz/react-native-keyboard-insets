@@ -70,7 +70,7 @@ export class ViewDriver implements Driver {
     ],
   }
 
-  get position() {
+  private get position() {
     return this.animation.interpolate({
       inputRange: [0, this.height],
       outputRange: [this.height, 0],
