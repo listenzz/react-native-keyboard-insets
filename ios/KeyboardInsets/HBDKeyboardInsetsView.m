@@ -24,6 +24,7 @@
         [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardDidShowNotification object:nil];
         [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillHideNotification object:nil];
         [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardDidHideNotification object:nil];
+        [self stopWatchKeyboardTransition];
     }
 }
 
@@ -65,7 +66,9 @@
     CGFloat keyboardHeight = keyboardRect.size.height;
     _keyboardHeight = keyboardHeight;
     
-    if (![self isAutoMode]) {
+    if ([self isAutoMode]) {
+        [self refreshEdgeBottom];
+    } else {
         self.onStatusChanged(@{
             @"height": @(keyboardHeight),
             @"shown": @(YES),
@@ -73,8 +76,6 @@
         });
     }
 
-    [self refreshEdgeBottom];
-    
     RCTLogInfo(@"[KeyboardInsetsView] keyboardWillShow startWatchKeyboardTransition");
     [self startWatchKeyboardTransition];
 }
@@ -92,38 +93,46 @@
 
 - (void)keyboardDidShow:(NSNotification *)notification {
     if ([self shouldHandleKeyboardTransition:_focusView]) {
-        UIView *focusView = [HBDKeyboardInsetsView findFocusView:self];
+        RCTLogInfo(@"[KeyboardInsetsView] keyboardDidShow stopWatchKeyboardTransition");
         [self stopWatchKeyboardTransition];
-        if (!focusView) {
-            [self handleKeyboardTransition:0];
-            _focusView = nil;
-            return;
-        }else if (_focusView != focusView) {
-            HBDKeyboardInsetsView *keyboardInsetsView = [HBDKeyboardInsetsView findClosetKeyboardInsetsView:focusView];
-            if (self != keyboardInsetsView) {
-                [self handleKeyboardTransition:0];
-                [keyboardInsetsView refreshEdgeBottom];
-                [keyboardInsetsView handleKeyboardTransition:_keyboardHeight];
-            }
-            _focusView = focusView;
-            return;
-        }
-        [self handleKeyboardTransition:_keyboardHeight];
+
+        if ([self isAutoMode]) {
+            UIView *focusView = [HBDKeyboardInsetsView findFocusView:self];
         
-        if (![self isAutoMode]) {
+            if (!focusView) {
+                [self handleKeyboardTransition:0];
+                _focusView = nil;
+                return;
+            }
+        
+            if (_focusView != focusView) {
+                HBDKeyboardInsetsView *keyboardInsetsView = [HBDKeyboardInsetsView findClosetKeyboardInsetsView:focusView];
+                if (self != keyboardInsetsView) {
+                    [self handleKeyboardTransition:0];
+                    [keyboardInsetsView refreshEdgeBottom];
+                    [keyboardInsetsView handleKeyboardTransition:_keyboardHeight];
+                }
+                _focusView = focusView;
+                return;
+            }
+            
+            [self handleKeyboardTransition:_keyboardHeight];
+        } else {
+            
+            [self handleKeyboardTransition:_keyboardHeight];
             self.onStatusChanged(@{
                 @"height": @(_keyboardHeight),
                 @"shown": @(YES),
                 @"transitioning": @(NO),
             });
         }
-        RCTLogInfo(@"[KeyboardInsetsView] keyboardDidShow stopWatchKeyboardTransition");
     }
 }
 
 - (void)keyboardWillHide:(NSNotification *)notification {
     if ([self shouldHandleKeyboardTransition:_focusView]) {
-        RCTLogInfo(@"[KeyboardInsetsView] keyboardWillHide startWatchKeyboardTransition");
+        // TODO: 检测键盘高度
+    
         _keyboardView = [HBDKeyboardInsetsView findKeyboardView];
         
         if (![self isAutoMode]) {
@@ -134,6 +143,7 @@
             });
         }
         
+        RCTLogInfo(@"[KeyboardInsetsView] keyboardWillHide startWatchKeyboardTransition");
         [self startWatchKeyboardTransition];
     }
 }
@@ -172,7 +182,6 @@
     _displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(watchKeyboardTransition)];
     _displayLink.preferredFramesPerSecond = 120;
     [_displayLink addToRunLoop:[NSRunLoop mainRunLoop] forMode:NSRunLoopCommonModes];
-    
 }
 
 - (void)stopWatchKeyboardTransition {
