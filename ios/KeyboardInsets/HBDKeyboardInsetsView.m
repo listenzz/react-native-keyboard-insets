@@ -10,6 +10,8 @@
     CADisplayLink *_displayLink;
     UIView *_keyboardView;
     CGFloat _keyboardHeight;
+    BOOL _keyboardShown;
+    BOOL _keyboardHeightChanged;
 }
 
 - (instancetype)init {
@@ -55,6 +57,8 @@
 
 - (void)keyboardWillShow:(NSNotification *)notification {
     UIView *focusView = [HBDKeyboardInsetsView findFocusView:self];
+    _keyboardShown = YES;
+    
     if (![self shouldHandleKeyboardTransition:focusView]) {
         return;
     }
@@ -65,6 +69,11 @@
     NSDictionary *userInfo = [notification userInfo];
     CGRect keyboardRect = [[userInfo objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue];
     CGFloat keyboardHeight = keyboardRect.size.height;
+    
+    if (_keyboardHeight != keyboardHeight) {
+        _keyboardHeightChanged = YES;
+    }
+    
     _keyboardHeight = keyboardHeight;
     
     if ([self isAutoMode]) {
@@ -149,6 +158,8 @@
 }
 
 - (void)keyboardWillHide:(NSNotification *)notification {
+    _keyboardShown = NO;
+    
     if ([self shouldHandleKeyboardTransition:_focusView]) {
         _keyboardView = [HBDKeyboardInsetsView findKeyboardView];
         
@@ -226,6 +237,17 @@
                 CGFloat actualEdgeBottom = MAX(_edgeBottom - _extraHeight, 0);
                 translationY = -MAX(position - actualEdgeBottom, 0);
             }
+            
+            if (_keyboardHeightChanged) {
+                _keyboardHeightChanged = NO;
+                self.transform = CGAffineTransformMakeTranslation(0, translationY);
+            }
+            
+            if (_keyboardShown && self.transform.ty < translationY) {
+                return;
+            }
+            
+            
             self.transform = CGAffineTransformMakeTranslation(0, translationY);
         }
     } else {

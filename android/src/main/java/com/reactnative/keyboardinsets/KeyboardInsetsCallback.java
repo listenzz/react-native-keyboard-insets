@@ -36,6 +36,8 @@ public class KeyboardInsetsCallback extends WindowInsetsAnimationCompat.Callback
     private boolean transitioning;
     private int keyboardHeight;
 
+    private boolean keyboardHeightChanged;
+
     @Override
     public void onPrepare(@NonNull WindowInsetsAnimationCompat animation) {
         transitioning = true;
@@ -58,7 +60,11 @@ public class KeyboardInsetsCallback extends WindowInsetsAnimationCompat.Callback
         }
 
         if (SystemUI.isImeVisible(view)) {
-            keyboardHeight = SystemUI.imeHeight(view);
+           int keyboardHeight = SystemUI.imeHeight(view);
+           if (keyboardHeight != this.keyboardHeight) {
+               keyboardHeightChanged = true;
+           }
+           this.keyboardHeight = keyboardHeight;
         }
 
         if (!view.isAutoMode()) {
@@ -113,7 +119,7 @@ public class KeyboardInsetsCallback extends WindowInsetsAnimationCompat.Callback
             View currentFocus = view.findFocus();
             if ((currentFocus != null && focusView != currentFocus)) {
                 KeyboardInsetsView keyboardInsetsView = findClosestKeyboardInsetsView(focusView);
-                if (keyboardInsetsView != null && keyboardInsetsView.isAutoMode()) {
+                if (keyboardInsetsView != this.view && keyboardInsetsView.isAutoMode()) {
                     keyboardInsetsView.setTranslationY(0);
                 }
                 focusView = currentFocus;
@@ -174,6 +180,16 @@ public class KeyboardInsetsCallback extends WindowInsetsAnimationCompat.Callback
                 float actualBottomInset = Math.max(edgeInsets.bottom - extraHeight, 0);
                 translationY = -Math.max(imeInsets.bottom - actualBottomInset, 0);
             }
+
+            if (keyboardHeightChanged) {
+                keyboardHeightChanged = false;
+                view.setTranslationY(translationY);
+            }
+
+            if (SystemUI.isImeVisible(view) && view.getTranslationY() < translationY) {
+                return;
+            }
+
             view.setTranslationY(translationY);
         } else {
             Log.d("KeyboardInsets", "imeInsets.bottom:" + imeInsets.bottom);
