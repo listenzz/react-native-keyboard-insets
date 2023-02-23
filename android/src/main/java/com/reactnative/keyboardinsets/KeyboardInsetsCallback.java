@@ -1,5 +1,6 @@
 package com.reactnative.keyboardinsets;
 
+import android.graphics.Rect;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewParent;
@@ -16,6 +17,7 @@ import com.facebook.react.uimanager.ThemedReactContext;
 import com.facebook.react.uimanager.UIManagerHelper;
 import com.facebook.react.uimanager.events.Event;
 import com.facebook.react.uimanager.events.EventDispatcher;
+import com.facebook.react.views.scroll.ReactScrollView;
 
 import java.util.List;
 
@@ -51,6 +53,9 @@ public class KeyboardInsetsCallback extends WindowInsetsAnimationCompat.Callback
         }
 
         FLog.i("KeyboardInsets", "WindowInsetsAnimation.Callback onStart");
+        if (view.isAutoMode()) {
+            adjustScrollViewOffsetIfNeeded();
+        }
 
         if (SystemUI.isImeVisible(view)) {
             keyboardHeight = SystemUI.imeHeight(view);
@@ -126,6 +131,10 @@ public class KeyboardInsetsCallback extends WindowInsetsAnimationCompat.Callback
                 sendEvent(new KeyboardStatusChangedEvent(view.getId(), keyboardHeight, SystemUI.isImeVisible(view), true));
             }
 
+            if (view.isAutoMode()) {
+                adjustScrollViewOffsetIfNeeded();
+            }
+
             handleKeyboardTransition(insets);
 
             if (!view.isAutoMode()) {
@@ -136,6 +145,22 @@ public class KeyboardInsetsCallback extends WindowInsetsAnimationCompat.Callback
         }
 
         return insets;
+    }
+
+    private void adjustScrollViewOffsetIfNeeded() {
+        ReactScrollView scrollView = findClosestScrollView(focusView);
+        if (scrollView != null) {
+            Rect offset = new Rect();
+            focusView.getDrawingRect(offset);
+            scrollView.offsetDescendantRectToMyCoords(focusView, offset);
+            float extraHeight = PixelUtil.toPixelFromDIP(view.getExtraHeight());
+            float dy = scrollView.getHeight() + scrollView.getScrollY() - offset.bottom - extraHeight;
+            if (dy < 0) {
+                Log.d("KeyboardInsets", "adjustScrollViewOffset");
+                scrollView.scrollTo(0, (int) (scrollView.getScrollY() - dy));
+                scrollView.requestLayout();
+            }
+        }
     }
 
     private void handleKeyboardTransition(WindowInsetsCompat insets) {
@@ -177,6 +202,19 @@ public class KeyboardInsetsCallback extends WindowInsetsAnimationCompat.Callback
 
         if (viewParent instanceof View) {
             return findClosestKeyboardInsetsView((View) viewParent);
+        }
+
+        return null;
+    }
+
+    private static ReactScrollView findClosestScrollView(View view) {
+        ViewParent viewParent = view.getParent();
+        if (viewParent instanceof ReactScrollView) {
+            return (ReactScrollView) viewParent;
+        }
+
+        if (viewParent instanceof View) {
+            return findClosestScrollView((View) viewParent);
         }
 
         return null;

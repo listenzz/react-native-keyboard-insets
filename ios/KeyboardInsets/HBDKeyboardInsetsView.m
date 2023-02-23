@@ -1,6 +1,7 @@
 #import "HBDKeyboardInsetsView.h"
 #import <React/RCTLog.h>
 #import <React/RCTUIManager.h>
+#import <React/RCTScrollView.h>
 
 @implementation HBDKeyboardInsetsView {
     UIView *_focusView;
@@ -67,6 +68,7 @@
     _keyboardHeight = keyboardHeight;
     
     if ([self isAutoMode]) {
+        [self adjustScrollViewOffsetIfNeeded];
         [self refreshEdgeBottom];
     } else {
         self.onStatusChanged(@{
@@ -84,9 +86,26 @@
     if ([self isAutoMode]) {
         CGFloat translateY = self.transform.ty;
         CGRect windowFrame = [self.window convertRect:_focusView.frame fromView:_focusView.superview];
-        CGFloat newEdgeBottom = MAX(CGRectGetMaxY(self.window.bounds) - CGRectGetMaxY(windowFrame) + translateY, 0);
+        CGFloat dy = CGRectGetMaxY(self.window.bounds) - CGRectGetMaxY(windowFrame);
+        CGFloat newEdgeBottom = MAX(dy + translateY, 0);
         if (_edgeBottom == 0 || _edgeBottom != newEdgeBottom){
             _edgeBottom = newEdgeBottom;
+        }
+    }
+}
+
+- (void)adjustScrollViewOffsetIfNeeded {
+    RCTScrollView *rct = [HBDKeyboardInsetsView findClosetScrollView:_focusView];
+    if (rct) {
+        CGRect frame = [rct.contentView convertRect:_focusView.frame fromView:_focusView.superview];
+        CGFloat dy =  CGRectGetHeight(rct.frame) + rct.scrollView.contentOffset.y -  CGRectGetMaxY(frame) - _extraHeight;
+        if (dy < 0) {
+            RCTLogInfo(@"[KeyboardInsetsView] adjustScrollViewOffset");
+            UIScrollView *scroll = rct.scrollView;
+            CGFloat range = scroll.contentSize.height - scroll.frame.size.height;
+            CGPoint offset = scroll.contentOffset;
+            offset.y = MIN(range, offset.y - dy);
+            [rct scrollToOffset:offset animated:NO];
         }
     }
 }
@@ -264,6 +283,18 @@
     
     if (view.superview) {
         return [self findClosetKeyboardInsetsView:view.superview];
+    }
+    
+    return nil;
+}
+
++ (RCTScrollView *)findClosetScrollView:(UIView *)view {
+    if ([view isKindOfClass:[RCTScrollView class]]) {
+        return (RCTScrollView *)view;
+    }
+    
+    if (view.superview) {
+        return [self findClosetScrollView:view.superview];
     }
     
     return nil;

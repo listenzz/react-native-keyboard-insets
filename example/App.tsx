@@ -17,8 +17,9 @@ function App() {
             <TextInput
               key={index + 10}
               style={styles.input}
+              multiline
               placeholder={`test keyboard instes ${index + 10}`}
-              textAlignVertical="center"
+              textAlignVertical="top"
             />
           ))}
         </ScrollView>
@@ -84,7 +85,7 @@ const styles = StyleSheet.create({
   },
 
   input: {
-    height: 40,
+    height: 100,
     marginHorizontal: 48,
     marginTop: 16,
     marginBottom: 0,
