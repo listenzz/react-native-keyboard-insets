@@ -1,14 +1,11 @@
-import { Animated, findNodeHandle, LayoutChangeEvent, View } from 'react-native'
-import { getEdgeInsetsForView } from 'react-native-keyboard-insets'
+import { Animated, LayoutChangeEvent } from 'react-native'
 import { Driver, DriverState } from './Driver'
 
 export class ViewDriver implements Driver {
-  constructor(public name: string, private viewRef: React.RefObject<View>) {}
+  constructor(public name: string) {}
 
   // 输入框距屏幕底部的距离
   private senderBottom = 0
-  // 面板距离屏幕底部的距离
-  private viewBottom = 0
 
   private y = 0
   private animation = new Animated.Value(0)
@@ -78,7 +75,7 @@ export class ViewDriver implements Driver {
   }
 
   private get translateY() {
-    const extraHeight = this.senderBottom - this.viewBottom
+    const extraHeight = this.senderBottom
     console.log(this.name, 'height', this.height, 'y', this.y, 'extraHeight', extraHeight)
     if (!this.shown || this.y === 0) {
       return this.position.interpolate({
@@ -98,13 +95,5 @@ export class ViewDriver implements Driver {
   onLayout = (event: LayoutChangeEvent) => {
     this.animation.setValue(event.nativeEvent.layout.height)
     this.height = event.nativeEvent.layout.height
-    const viewTag = findNodeHandle(this.viewRef.current)
-    if (viewTag === null) {
-      return
-    }
-
-    getEdgeInsetsForView(viewTag, insets => {
-      this.viewBottom = insets.bottom!
-    })
   }
 }

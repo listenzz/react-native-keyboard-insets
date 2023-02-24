@@ -27,10 +27,8 @@ function KeyboardChat() {
     })
   }, [])
 
-  const emojiRef = useRef<View>(null)
-  const toolboxRef = useRef<View>(null)
-  const emoji = useRef(new ViewDriver('emoji', emojiRef)).current
-  const toolbox = useRef(new ViewDriver('toolbox', toolboxRef)).current
+  const emoji = useRef(new ViewDriver('emoji')).current
+  const toolbox = useRef(new ViewDriver('toolbox')).current
   const keyboard = useRef(new KeyboardDriver(inputRef)).current
 
   const [driver, setDriver] = useState<Driver>()
@@ -67,13 +65,13 @@ function KeyboardChat() {
       </KeyboardInsetsView>
       <SafeAreaView edges={['bottom']} />
 
-      <Animated.View style={[styles.absolute, styles.red, emoji.style]} onLayout={emoji.onLayout} ref={emojiRef}>
+      <Animated.View style={[styles.absolute, styles.red, emoji.style]} onLayout={emoji.onLayout}>
         <View style={styles.emoji}>
           <Text style={styles.text}>表情包</Text>
         </View>
         <SafeAreaView edges={['bottom']} />
       </Animated.View>
-      <Animated.View style={[styles.absolute, styles.blue, toolbox.style]} onLayout={toolbox.onLayout} ref={toolboxRef}>
+      <Animated.View style={[styles.absolute, styles.blue, toolbox.style]} onLayout={toolbox.onLayout}>
         <View style={styles.toolbox}>
           <Text style={styles.text}>工具箱</Text>
         </View>
@@ -87,4 +85,5 @@ export default withNavigationItem({
   titleItem: {
     title: '聊天键盘处理',
   },
+  fitsOpaqueNavigationBarAndroid: false,
 })(KeyboardChat)
