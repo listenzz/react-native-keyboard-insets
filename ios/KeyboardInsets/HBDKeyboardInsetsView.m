@@ -1,17 +1,20 @@
 #import "HBDKeyboardInsetsView.h"
+#import "HBDKeyboardAutoHandler.h"
+#import "HBDKeyboardManualHandler.h"
+
 #import <React/RCTLog.h>
 #import <React/RCTUIManager.h>
 #import <React/RCTScrollView.h>
 
 @implementation HBDKeyboardInsetsView {
     UIView *_focusView;
-    CGFloat _edgeBottom;
-    
+ 
     CADisplayLink *_displayLink;
     UIView *_keyboardView;
     CGFloat _keyboardHeight;
-    BOOL _keyboardShown;
-    BOOL _keyboardHeightChanged;
+    
+    HBDKeyboardAutoHandler *_autoHandler;
+    HBDKeyboardManualHandler *_manualHandler;
 }
 
 - (instancetype)init {
@@ -19,6 +22,20 @@
         _mode = @"auto";
     }
     return self;
+}
+
+- (HBDKeyboardAutoHandler *)autoHandler {
+    if (!_autoHandler) {
+        _autoHandler = [[HBDKeyboardAutoHandler alloc] initWithKeyboardInsetsView:self];
+    }
+    return _autoHandler;
+}
+
+- (HBDKeyboardManualHandler *)manualHandler {
+    if (!_manualHandler) {
+        _manualHandler = [[HBDKeyboardManualHandler alloc] initWithKeyboardInsetsView:self];
+    }
+    return _manualHandler;
 }
 
 - (void)willMoveToWindow:(UIWindow *)newWindow {
@@ -57,7 +74,6 @@
 
 - (void)keyboardWillShow:(NSNotification *)notification {
     UIView *focusView = [HBDKeyboardInsetsView findFocusView:self];
-    _keyboardShown = YES;
     
     if (![self shouldHandleKeyboardTransition:focusView]) {
         return;
@@ -70,130 +86,75 @@
     CGRect keyboardRect = [[userInfo objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue];
     CGFloat keyboardHeight = keyboardRect.size.height;
     
-    if (_keyboardHeight != keyboardHeight) {
-        _keyboardHeightChanged = YES;
-    }
-    
     _keyboardHeight = keyboardHeight;
     
     if ([self isAutoMode]) {
-        [self adjustScrollViewOffsetIfNeeded];
-        [self refreshEdgeBottom];
+        [[self autoHandler] keyboardWillShow:focusView keyboardHeight:keyboardHeight];
     } else {
-        self.onStatusChanged(@{
-            @"height": @(keyboardHeight),
-            @"shown": @(YES),
-            @"transitioning": @(YES),
-        });
+        [[self manualHandler] keyboardWillShow:focusView keyboardHeight:keyboardHeight];
     }
 
     RCTLogInfo(@"[KeyboardInsetsView] keyboardWillShow startWatchKeyboardTransition");
     [self startWatchKeyboardTransition];
 }
 
-- (void)refreshEdgeBottom {
-    if ([self isAutoMode]) {
-        CGFloat translateY = self.transform.ty;
-        CGRect windowFrame = [self.window convertRect:_focusView.frame fromView:_focusView.superview];
-        CGFloat dy = CGRectGetMaxY(self.window.bounds) - CGRectGetMaxY(windowFrame);
-        CGFloat newEdgeBottom = MAX(dy + translateY, 0);
-        if (_edgeBottom == 0 || _edgeBottom != newEdgeBottom){
-            _edgeBottom = newEdgeBottom;
-        }
-    }
-}
-
-- (void)adjustScrollViewOffsetIfNeeded {
-    RCTScrollView *rct = [HBDKeyboardInsetsView findClosetScrollView:_focusView];
-    if (rct) {
-        CGRect frame = [rct.contentView convertRect:_focusView.frame fromView:_focusView.superview];
-        CGFloat dy =  CGRectGetHeight(rct.frame) + rct.scrollView.contentOffset.y -  CGRectGetMaxY(frame) - _extraHeight;
-        if (dy < 0) {
-            RCTLogInfo(@"[KeyboardInsetsView] adjustScrollViewOffset");
-            UIScrollView *scroll = rct.scrollView;
-            CGFloat range = scroll.contentSize.height - scroll.frame.size.height;
-            CGPoint offset = scroll.contentOffset;
-            offset.y = MIN(range, offset.y - dy);
-            [rct scrollToOffset:offset animated:NO];
-        }
-    }
-}
-
 - (void)keyboardDidShow:(NSNotification *)notification {
-    if ([self shouldHandleKeyboardTransition:_focusView]) {
-        RCTLogInfo(@"[KeyboardInsetsView] keyboardDidShow stopWatchKeyboardTransition");
-        [self stopWatchKeyboardTransition];
+    if (![self shouldHandleKeyboardTransition:_focusView]) {
+        return;
+    }
+    
+    RCTLogInfo(@"[KeyboardInsetsView] keyboardDidShow stopWatchKeyboardTransition");
+    [self stopWatchKeyboardTransition];
 
-        if ([self isAutoMode]) {
-            UIView *focusView = [HBDKeyboardInsetsView findFocusView:self];
-        
-            if (!focusView) {
-                [self handleKeyboardTransition:0];
-                _focusView = nil;
-                return;
+    if ([self isAutoMode]) {
+        UIView *focusView = [HBDKeyboardInsetsView findFocusView:self];
+        if (focusView && focusView != _focusView) {
+            HBDKeyboardInsetsView *insetsView = [HBDKeyboardInsetsView findClosetKeyboardInsetsView:focusView];
+            if (insetsView != self) {
+                focusView = nil;
             }
-        
-            if (_focusView != focusView) {
-                HBDKeyboardInsetsView *keyboardInsetsView = [HBDKeyboardInsetsView findClosetKeyboardInsetsView:focusView];
-                if (self != keyboardInsetsView) {
-                    [self handleKeyboardTransition:0];
-                    [keyboardInsetsView refreshEdgeBottom];
-                    [keyboardInsetsView handleKeyboardTransition:_keyboardHeight];
-                }
-                _focusView = focusView;
-                return;
-            }
-            
-            [self handleKeyboardTransition:_keyboardHeight];
-        } else {
-            
-            [self handleKeyboardTransition:_keyboardHeight];
-            self.onStatusChanged(@{
-                @"height": @(_keyboardHeight),
-                @"shown": @(YES),
-                @"transitioning": @(NO),
-            });
         }
+        _focusView = focusView;
+        [[self autoHandler] keyboardDidShow:focusView keyboardHeight:_keyboardHeight];
+    } else {
+        [[self manualHandler] keyboardDidShow:_focusView keyboardHeight:_keyboardHeight];
     }
 }
 
 - (void)keyboardWillHide:(NSNotification *)notification {
-    _keyboardShown = NO;
-    
-    if ([self shouldHandleKeyboardTransition:_focusView]) {
-        _keyboardView = [HBDKeyboardInsetsView findKeyboardView];
-        
-        if (![self isAutoMode]) {
-            self.onStatusChanged(@{
-                @"height": @(_keyboardHeight),
-                @"shown": @(NO),
-                @"transitioning": @(YES),
-            });
-        }
-        
-        RCTLogInfo(@"[KeyboardInsetsView] keyboardWillHide startWatchKeyboardTransition");
-        [self startWatchKeyboardTransition];
+    if (![self shouldHandleKeyboardTransition:_focusView]) {
+        return;
     }
+    
+    _keyboardView = [HBDKeyboardInsetsView findKeyboardView];
+    
+    if ([self isAutoMode]) {
+        [[self autoHandler] keyboardWillHide:_focusView keyboardHeight:_keyboardHeight];
+    } else {
+        [[self manualHandler] keyboardWillHide:_focusView keyboardHeight:_keyboardHeight];
+    }
+    
+    RCTLogInfo(@"[KeyboardInsetsView] keyboardWillHide startWatchKeyboardTransition");
+    [self startWatchKeyboardTransition];
 }
 
 
 - (void)keyboardDidHide:(NSNotification *)notification {
-    [self stopWatchKeyboardTransition];
-    if ([self shouldHandleKeyboardTransition:_focusView]) {
-        [self handleKeyboardTransition:0];
-        
-        if (![self isAutoMode]) {
-            self.onStatusChanged(@{
-                @"height": @(_keyboardHeight),
-                @"shown": @(NO),
-                @"transitioning": @(NO),
-            });
-        }
-        
-        RCTLogInfo(@"[KeyboardInsetsView] keyboardDidHide stopWatchKeyboardTransition");
-    }
+    UIView *focusView = _focusView;
     _focusView = nil;
-    _edgeBottom = 0;
+    
+    if (![self shouldHandleKeyboardTransition:focusView]) {
+        return;
+    }
+    
+    RCTLogInfo(@"[KeyboardInsetsView] keyboardDidHide stopWatchKeyboardTransition");
+    [self stopWatchKeyboardTransition];
+    
+    if ([self isAutoMode]) {
+        [[self autoHandler] keyboardDidHide:focusView keyboardHeight:_keyboardHeight];
+    } else {
+        [[self manualHandler] keyboardDidHide:focusView keyboardHeight:_keyboardHeight];
+    }
 }
 
 - (BOOL)shouldHandleKeyboardTransition:(UIView *)focusView {
@@ -232,31 +193,11 @@
 - (void)handleKeyboardTransition:(CGFloat)position {
     if ([self isAutoMode]) {
         if (_focusView) {
-            CGFloat translationY = 0;
-            if (position > 0) {
-                CGFloat actualEdgeBottom = MAX(_edgeBottom - _extraHeight, 0);
-                translationY = -MAX(position - actualEdgeBottom, 0);
-            }
-            
-            if (_keyboardHeightChanged) {
-                _keyboardHeightChanged = NO;
-                self.transform = CGAffineTransformMakeTranslation(0, translationY);
-            }
-            
-            if (_keyboardShown && self.transform.ty < translationY) {
-                return;
-            }
-            
-            
-            self.transform = CGAffineTransformMakeTranslation(0, translationY);
+            [[self autoHandler] handleKeyboardTransition:position];
         }
     } else {
-        RCTLogInfo(@"[KeyboardInsetsView] keyboard position: %f", position);
-        self.onPositionChanged(@{
-            @"position": @(position)
-        });
+        [[self manualHandler] handleKeyboardTransition:position];
     }
-
 }
 
 - (BOOL)isAutoMode {
@@ -305,18 +246,6 @@
     
     if (view.superview) {
         return [self findClosetKeyboardInsetsView:view.superview];
-    }
-    
-    return nil;
-}
-
-+ (RCTScrollView *)findClosetScrollView:(UIView *)view {
-    if ([view isKindOfClass:[RCTScrollView class]]) {
-        return (RCTScrollView *)view;
-    }
-    
-    if (view.superview) {
-        return [self findClosetScrollView:view.superview];
     }
     
     return nil;
