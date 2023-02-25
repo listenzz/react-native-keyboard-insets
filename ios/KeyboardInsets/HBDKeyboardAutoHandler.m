@@ -57,8 +57,8 @@
     
     CGFloat translationY = 0;
     if (position > 0) {
-        CGFloat actualEdgeBottom = MAX(self.edgeBottom - view.extraHeight, 0);
-        translationY = -MAX(position - actualEdgeBottom, 0);
+        CGFloat edgeBottom = MAX(self.edgeBottom - view.extraHeight, 0);
+        translationY = -MAX(position - edgeBottom, 0);
     }
     
     if (self.forceUpdated) {
@@ -91,7 +91,6 @@
         CGRect frame = [rct.contentView convertRect:focusView.frame fromView:focusView.superview];
         CGFloat dy =  CGRectGetHeight(rct.frame) + scrollView.contentOffset.y -  CGRectGetMaxY(frame) - self.view.extraHeight;
         if (dy < 0) {
-            RCTLogInfo(@"[KeyboardInsetsView] adjustScrollViewOffset");
             CGFloat range = scrollView.contentSize.height - scrollView.frame.size.height;
             CGPoint offset = scrollView.contentOffset;
             offset.y = MIN(range, offset.y - dy);

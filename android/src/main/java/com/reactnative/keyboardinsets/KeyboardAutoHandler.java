@@ -1,7 +1,6 @@
 package com.reactnative.keyboardinsets;
 
 import android.graphics.Rect;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewParent;
 
@@ -58,17 +57,10 @@ public class KeyboardAutoHandler {
         Insets imeInsets = insets.getInsets(WindowInsetsCompat.Type.ime());
         EdgeInsets edge = SystemUI.getEdgeInsetsForView(focusView);
         float extraHeight = PixelUtil.toPixelFromDIP(view.getExtraHeight());
-        Log.d("KeyboardInsets", "edge.bottom:" + edge.bottom + " imeInsets.bottom:" + imeInsets.bottom);
         float translationY = 0;
         if (imeInsets.bottom > 0) {
-            if (SystemUI.isGestureNavigationEnabled(reactContext.getContentResolver())) {
-                float actualBottomInset = Math.max(edge.bottom - extraHeight, 0);
-                translationY = -Math.max(imeInsets.bottom - actualBottomInset, 0);
-            } else {
-                Insets navInsets = insets.getInsets(WindowInsetsCompat.Type.navigationBars());
-                float actualBottomInset = Math.max(edge.bottom - navInsets.bottom - extraHeight, 0);
-                translationY = -Math.max(imeInsets.bottom - navInsets.bottom - actualBottomInset, 0);
-            }
+            float bottomInset = Math.max(edge.bottom - extraHeight, 0);
+            translationY = -Math.max(imeInsets.bottom - bottomInset, 0);
         }
 
         if (forceUpdated) {
@@ -92,7 +84,6 @@ public class KeyboardAutoHandler {
             float extraHeight = PixelUtil.toPixelFromDIP(view.getExtraHeight());
             float dy = scrollView.getHeight() + scrollView.getScrollY() - offset.bottom - extraHeight;
             if (dy < 0) {
-                Log.d("KeyboardInsets", "adjustScrollViewOffset");
                 scrollView.scrollTo(0, (int) (scrollView.getScrollY() - dy));
                 scrollView.requestLayout();
             }

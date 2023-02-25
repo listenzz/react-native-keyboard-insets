@@ -1,8 +1,6 @@
 package com.reactnative.keyboardinsets;
 
-import android.content.ContentResolver;
 import android.graphics.Rect;
-import android.provider.Settings;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -22,10 +20,6 @@ public class SystemUI {
         WindowInsetsCompat insetsCompat = ViewCompat.getRootWindowInsets(view);
         assert insetsCompat != null;
         return insetsCompat.getInsets(WindowInsetsCompat.Type.ime()).bottom;
-    }
-
-    public static boolean isGestureNavigationEnabled(ContentResolver contentResolver) {
-        return Settings.Secure.getInt(contentResolver, "navigation_mode", 0) == 2;
     }
 
     public static EdgeInsets getEdgeInsetsForView(@NonNull View view) {

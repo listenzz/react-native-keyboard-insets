@@ -85,5 +85,4 @@ export default withNavigationItem({
   titleItem: {
     title: '聊天键盘处理',
   },
-  fitsOpaqueNavigationBarAndroid: false,
 })(KeyboardChat)
