@@ -1,11 +1,10 @@
 package com.reactnative.keyboardinsets;
 
-import androidx.annotation.Nullable;
-
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.uimanager.PixelUtil;
 import com.facebook.react.uimanager.events.Event;
+import com.facebook.react.uimanager.events.RCTEventEmitter;
 
 public class KeyboardStatusChangedEvent extends Event<KeyboardStatusChangedEvent> {
 
@@ -25,13 +24,13 @@ public class KeyboardStatusChangedEvent extends Event<KeyboardStatusChangedEvent
         return "topStatusChanged";
     }
 
-    @Nullable
     @Override
-    protected WritableMap getEventData() {
+    public void dispatch(RCTEventEmitter rctEventEmitter) {
         WritableMap map = Arguments.createMap();
         map.putDouble("height", PixelUtil.toDIPFromPixel(height));
         map.putBoolean("transitioning", transitioning);
         map.putBoolean("shown", shown);
-        return map;
+        rctEventEmitter.receiveEvent(getViewTag(), getEventName(), map);
     }
+
 }
