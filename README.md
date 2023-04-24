@@ -1,5 +1,7 @@
 # react-native-keyboard-insets
 
+本库已迁移至 [react-native-troika/keyboard-insets](https://github.com/sdcxtech/react-native-troika/blob/master/packages/keyboard-insets/README.md)
+
 A powerful Keyboard Aware View for React Native.
 
 使用简单，自动模式下不需要额外代码来处理键盘。
